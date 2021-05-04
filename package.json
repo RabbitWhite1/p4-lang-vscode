@@ -1,0 +1,57 @@
+{
+    "name": "p4-lang",
+    "displayName": "p4-lang",
+    "description": "p4 language support in vscode",
+    "version": "0.0.1",
+	"publisher": "Zhanghan Wang",
+    "engines": {
+        "vscode": "^1.55.0"
+    },
+    "categories": [
+        "Programming Languages"
+    ],
+	"activationEvents": [
+		"onLanguage:p4"
+	],
+	"main": "./out/extension.js",
+    "contributes": {
+        "languages": [{
+            "id": "p4",
+            "aliases": ["p4", "p4"],
+            "extensions": [".p4"]
+        }],
+        "grammars": [
+            {
+                "language": "p4",
+                "scopeName": "source.p4",
+                "path": "./syntaxes/p4.tmLanguage.json"
+            }
+        ],
+        "semanticTokenTypes": [
+            {
+                "id": "header",
+                "superType": "type",
+                "description": "`header` in p4-lang"
+            },
+            {
+                "id": "table",
+                "superType": "type",
+                "description": "`table` in p4-lang"
+            }
+        ]
+    },
+    "scripts": {
+		"vscode:prepublish": "npm run compile",
+		"compile": "tsc -p ./",
+		"lint": "eslint . --ext .ts,.tsx",
+		"watch": "tsc -watch -p ./"
+	},
+    "devDependencies": {
+		"@types/node": "^12.12.0",
+		"@types/vscode": "^1.42.0",
+		"@typescript-eslint/eslint-plugin": "^4.16.0",
+		"@typescript-eslint/parser": "^4.16.0",
+		"eslint": "^7.21.0",
+		"typescript": "^4.2.2"
+	}
+}
