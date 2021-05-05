@@ -1,6 +1,6 @@
 # p4-lang README
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/RabbitWhite1/USTC-Health-Report/blob/master/LICENSE)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/RabbitWhite1/p4-lang-vscode/blob/master/LICENSE)
 
 This is a vscode extension for p4-lang. 
 
