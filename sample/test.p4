@@ -36,7 +36,7 @@ struct metadata_t {
 error {
     IPv4IncorrectVersion,
     IPv4OptionsNotSupported //gggg 
-    /* ggg ****/
+    /* ggg ***/**/
 }
 
 parser my_parser(packet_in packet,
@@ -65,7 +65,7 @@ control my_deparser(packet_out packet,
 {
     apply {
         packet.emit(hdr.ethernet);
-        packet.emit(hdr.ipv4); // fdfasd
+        packet.emit(hdr.ipv4);
     }
 }
 
