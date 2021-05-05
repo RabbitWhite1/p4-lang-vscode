@@ -36,7 +36,7 @@ struct metadata_t {
 error {
     IPv4IncorrectVersion,
     IPv4OptionsNotSupported //gggg 
-    /* ggg ***/**/
+    /* ggg ***/
 }
 
 parser my_parser(packet_in packet,
