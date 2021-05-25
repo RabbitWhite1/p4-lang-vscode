@@ -2,11 +2,21 @@
 	"compilerOptions": {
 		"module": "commonjs",
 		"target": "es2019",
+        "allowJs": true,
 		"lib": ["ES2019", "DOM"],
 		"outDir": "out",
 		"sourceMap": true,
 		"rootDir": "src",
 		"strict": true
 	},
-	"exclude": ["node_modules", ".vscode-test"]
+	"exclude": [
+        "./lib",
+        "**/*.js",
+        "**/*.js.map",
+        // "node_modules",
+    ],
+	"include": [
+		"src/main.ts",
+		"src/grammar/*.ts",
+	]
 }
