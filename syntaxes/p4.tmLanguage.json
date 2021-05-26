@@ -6,12 +6,6 @@
   },
   "patterns": [
     {
-      "include": "#lineComments"
-    },
-    {
-      "include": "#blockComments"
-    },
-    {
       "include": "#keywords"
     },
     {
@@ -34,9 +28,6 @@
     },
     {
       "include": "#strings"
-    },
-    {
-      "include": "#imports"
     },
     {
       "include": "#typedefs"
@@ -70,20 +61,15 @@
     },
     {
       "include": "#function_calls"
+    },
+    {
+      "include": "#lineComments"
+    },
+    {
+      "include": "#blockComments"
     }
   ],
   "repository": {
-    "lineComments": {
-      "name": "comment.line.double-slash.p4",
-      "begin": "//",
-      "end": "(?:\\n)"
-    },
-    "blockComments": {
-      "name": "comment.block.p4",
-      "begin": "/*",
-      "end": "*/",
-      "match": "/\\*.*?\\*/"
-    },
     "keywords": {
       "patterns": [
         {
@@ -94,7 +80,7 @@
     },
     "builtin_types": {
       "name": "storage.type.p4",
-      "match": "(inout|in|out|packet_in|packet_out|bool)"
+      "match": "([^\\w\\d_])+(inout|in|out|packet_in|packet_out|bool|void|extern|enum)[^\\w\\d_]+"
     },
     "buildin_variables": {
       "name": "support.variable.p4",
@@ -309,6 +295,32 @@
           ]
         }
       }
+    },
+    "lineComments": {
+      "name": "comment.line.double-slash.p4",
+      "begin": "//",
+      "end": "(?:\\n)"
+    },
+    "blockComments": {
+      "name": "comment.block6.p4",
+      "begin": "/\\*",
+      "end": "\\*/",
+      "beginCaptures": {
+        "0": {
+          "name": "punctuation.paren.open"
+        }
+      },
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.paren.close"
+        }
+      },
+      "patterns": [
+        {
+          "name": "comment.block.p4",
+          "match": "\\b[^\\*/]*|[^*]+/"
+        }
+      ]
     }
   },
   "scopeName": "source.p4"
