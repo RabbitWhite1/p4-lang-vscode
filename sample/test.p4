@@ -1,3 +1,4 @@
+//fg
 #include <core.p4>
 #include <v1model.p4>
 
@@ -36,7 +37,9 @@ struct metadata_t {
 error {
     IPv4IncorrectVersion,
     IPv4OptionsNotSupported //gggg 
-    /* ggg ***/
+    /*ggg   ewag
+    gew46
+    asd input */
 }
 
 parser my_parser(packet_in packet,

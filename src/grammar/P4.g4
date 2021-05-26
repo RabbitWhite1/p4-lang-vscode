@@ -916,8 +916,8 @@ UNEXPECTED_TOKEN			: '<*>.|\n';
 
 // added by Ali
 WS 							: [ \t\r\n]+ -> channel(HIDDEN) ;
-COMMENT 					: '/*' .*? '*/' -> skip ;
-LINE_COMMENT 				: '//' ~[\r\n]* -> skip ;
+COMMENT 					: '/*' .*? '*/';
+LINE_COMMENT 				: '//' ~[\r\n]*;
 fragment ESCAPED_QUOTE 		: '\\"';
 STRING_LITERAL 				: '"' ( ESCAPED_QUOTE | ~('\n'|'\r') )*? '"';
 

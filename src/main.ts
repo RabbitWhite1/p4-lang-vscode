@@ -29,7 +29,7 @@ const legend = (function () {
 })();
 
 export function activate(context: vscode.ExtensionContext) {
-	context.subscriptions.push(vscode.languages.registerDocumentSemanticTokensProvider({ language: 'semanticLanguage'}, new DocumentSemanticTokensProvider(), legend));
+	context.subscriptions.push(vscode.languages.registerDocumentSemanticTokensProvider({ language: 'p4'}, new DocumentSemanticTokensProvider(), legend));
 }
 
 interface parsedToken {
@@ -45,7 +45,7 @@ class DocumentSemanticTokensProvider implements vscode.DocumentSemanticTokensPro
 		const allTokens = this._parseText(document.getText());
 		const builder = new vscode.SemanticTokensBuilder();
 		allTokens.forEach((token: parsedToken) => {
-			builder.push(token.line, token.startCharacter, token.length, this._encodeTokenType("keyword"));
+			builder.push(token.line, token.startCharacter, token.length, this._encodeTokenType(token.tokenType), this._encodeTokenModifiers(token.tokenModifiers));
 		});
 		return builder.build();
 	}
@@ -87,20 +87,17 @@ class DocumentSemanticTokensProvider implements vscode.DocumentSemanticTokensPro
 		const tokens = tokenStream.getTokens();
 		
 		tokens.forEach(token => {
-			if (token.type == 90) {
-				console.log(token.text);
-			}
-			if (token.text == '#include') {
+			if (token.type == P4Lexer.PREPROC_INCLUDE) {
 				parsedTokens.push({
-					line: token.line,
+					line: token.line - 1, // vscode API starts from 0, while ANTLR4 starts from 1
 					startCharacter: token.charPositionInLine,
-					length: token.stopIndex - token.startIndex,
+					length: token.stopIndex - token.startIndex + 1,
 					tokenType: "keyword", // TODO
 					tokenModifiers: ['declaration']
 				});
-				console.log(token);
 			}
-			});
+			
+		});
 		return parsedTokens;
 	}
 }
