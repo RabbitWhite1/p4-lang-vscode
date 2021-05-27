@@ -7,7 +7,9 @@ import {
 	InputContext,
 	ProgramContext,
 	TypeRefContext,
-	StructFieldContext
+	StructFieldContext,
+	ParameterContext,
+	VariableDeclarationContext
 } from './grammar/P4Parser';
 import { P4Visitor } from './grammar/P4Visitor';
 import { AbstractParseTreeVisitor } from 'antlr4ts/tree/AbstractParseTreeVisitor';
@@ -111,6 +113,54 @@ class SemanticHighlightingVisitor extends AbstractParseTreeVisitor<ParsedToken[]
 		return parsedTokens;
 	}
 
+	visitParameter(ctx: ParameterContext) {
+		let parsedTokens: ParsedToken[] = [];
+		// parse `typeRef`
+		let typeRefToken = ctx.typeRef()?.typeName()?.prefixedType()?.type_or_id()?.IDENTIFIER()?.symbol;
+		typeRefToken && parsedTokens.push({
+			line: typeRefToken.line - 1, // vscode API starts from 0, while ANTLR4 starts from 1
+			startCharacter: typeRefToken.charPositionInLine,
+			length: typeRefToken.stopIndex - typeRefToken.startIndex + 1,
+			tokenType: "class",
+			tokenModifiers: ['declaration']
+		});
+		// parse `name`
+		let nameToken = ctx.name()?.nonTypeName()?.type_or_id()?.IDENTIFIER()?.symbol;
+		nameToken && parsedTokens.push({
+			line: nameToken.line - 1, // vscode API starts from 0, while ANTLR4 starts from 1
+			startCharacter: nameToken.charPositionInLine,
+			length: nameToken.stopIndex - nameToken.startIndex + 1,
+			tokenType: "variable",
+			tokenModifiers: ['declaration']
+		});
+		
+		return parsedTokens;
+	}
+
+	visitVariableDeclaration(ctx: VariableDeclarationContext) {
+		let parsedTokens: ParsedToken[] = [];
+		// parse `typeRef`
+		let typeRefToken = ctx.typeRef()?.typeName()?.prefixedType()?.type_or_id()?.IDENTIFIER()?.symbol;
+		typeRefToken && parsedTokens.push({
+			line: typeRefToken.line - 1, // vscode API starts from 0, while ANTLR4 starts from 1
+			startCharacter: typeRefToken.charPositionInLine,
+			length: typeRefToken.stopIndex - typeRefToken.startIndex + 1,
+			tokenType: "class",
+			tokenModifiers: ['declaration']
+		});
+		// parse `name`
+		let nameToken = ctx.name()?.nonTypeName()?.type_or_id()?.IDENTIFIER()?.symbol;
+		nameToken && parsedTokens.push({
+			line: nameToken.line - 1, // vscode API starts from 0, while ANTLR4 starts from 1
+			startCharacter: nameToken.charPositionInLine,
+			length: nameToken.stopIndex - nameToken.startIndex + 1,
+			tokenType: "variable",
+			tokenModifiers: ['declaration']
+		});
+		
+		return parsedTokens;
+	}
+	
 }
 
 class DocumentSemanticTokensProvider implements vscode.DocumentSemanticTokensProvider {
@@ -156,7 +206,8 @@ class DocumentSemanticTokensProvider implements vscode.DocumentSemanticTokensPro
 		const tree = parser.program();
 
 		/* This is a sample for highlighting at SEMANTIC level.
-		 * It can highlight any `typeRef` as `class` and `name` as `variable` in `structField`.
+		 * It can highlight any `typeRef` as `class` and `name` as `variable` 
+		 * in `structField`, `parameter` and `variableDeclaration`
 		 */
 		let parsedTokens: ParsedToken[] = [];
 		const semanticHighlightingVisitor = new SemanticHighlightingVisitor();
