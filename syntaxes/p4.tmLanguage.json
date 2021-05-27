@@ -86,7 +86,7 @@
     },
     "builtin_types": {
       "name": "storage.type.p4",
-      "match": "([^\\w\\d_])+(inout|in|out|packet_in|packet_out|bool|void|extern|enum)[^\\w\\d_]+"
+      "match": "(inout|in|out|packet_in|packet_out|bool|void|extern|enum|match_kind)"
     },
     "buildin_variables": {
       "name": "support.variable.p4",

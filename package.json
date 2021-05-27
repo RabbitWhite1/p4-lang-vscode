@@ -48,7 +48,7 @@
         "compile": "tsc -p ./",
         "lint": "eslint . --ext .ts,.tsx",
         "watch": "tsc -watch -p ./",
-        "antlr4ts": "antlr4ts -visitor ./src/grammar/P4.g4"
+        "antlr4ts": "antlr4ts -visitor ./src/grammar/P4.g4 -o ./src/grammar"
     },
     "devDependencies": {
         "@types/node": "^12.12.0",

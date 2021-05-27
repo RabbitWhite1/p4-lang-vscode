@@ -25,17 +25,20 @@ declaration
 
 preprocessorLine
 	: PREPROC_INCLUDE ppIncludeFileName
+	| PREPROC_DEFINE type_or_id expression
+	| PREPROC_DEFINE type_or_id
 	| PREPROC_DEFINE
-	| PREPROC_DEFINE expression expression
 	| PREPROC_UNDEF
-	| PREPROC_IFDEF
+	| PREPROC_LINE
+	| PREPROC_IFDEF type_or_id
+    | PREPROC_IFDEF
+	| PREPROC_IFNDEF type_or_id
 	| PREPROC_IFNDEF
 	| PREPROC_IF expression
-	| PREPROC_ELSEIF
+	| PREPROC_ELSEIF expression
 	| PREPROC_ELSE
 	| PREPROC_ENDIF
-	| PREPROC_LINE
-	;
+    ;
 
 ppIncludeFileName 
 	: STRING_LITERAL
@@ -533,6 +536,7 @@ headerUnionDeclaration
 
 structFieldList
     : /* empty */
+    | structFieldList preprocessorLine
     | structFieldList structField
     ;
 

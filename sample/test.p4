@@ -27,6 +27,9 @@ header ipv4_t {
 }
 
 struct headers_t {
+#ifndef adf
+#else
+#endif 
     ethernet_t ethernet;
     ipv4_t     ipv4;
 }

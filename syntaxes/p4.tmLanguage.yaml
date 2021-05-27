@@ -45,7 +45,9 @@ repository:
         match: \b(if|return|error|default|transition)\b
   builtin_types:
     name: storage.type.p4
-    match: ([^\w\d_])+(inout|in|out|packet_in|packet_out|bool|void|extern|enum)[^\w\d_]+
+    match: (inout|in|out|packet_in|packet_out|bool|void|extern|enum|match_kind)
+    # captures: 
+    #   "1": { name: storage.type.p4 }
   buildin_variables:
     name: support.variable.p4
     match: \b(true|false)\b

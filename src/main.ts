@@ -9,7 +9,12 @@ import {
 	TypeRefContext,
 	StructFieldContext,
 	ParameterContext,
-	VariableDeclarationContext
+	VariableDeclarationContext,
+	EnumDeclarationContext,
+	IdentifierListContext,
+	PreprocessorLineContext,
+	ExpressionContext,
+	ExternDeclarationContext
 } from './grammar/P4Parser';
 import { P4Visitor } from './grammar/P4Visitor';
 import { AbstractParseTreeVisitor } from 'antlr4ts/tree/AbstractParseTreeVisitor';
@@ -137,7 +142,7 @@ class SemanticHighlightingVisitor extends AbstractParseTreeVisitor<ParsedToken[]
 		return parsedTokens;
 	}
 
-	visitVariableDeclaration(ctx: VariableDeclarationContext) {
+	visitVariableDeclaration(ctx: VariableDeclarationContext): ParsedToken[] {
 		let parsedTokens: ParsedToken[] = [];
 		// parse `typeRef`
 		let typeRefToken = ctx.typeRef()?.typeName()?.prefixedType()?.type_or_id()?.IDENTIFIER()?.symbol;
@@ -159,6 +164,64 @@ class SemanticHighlightingVisitor extends AbstractParseTreeVisitor<ParsedToken[]
 		});
 		
 		return parsedTokens;
+	}
+
+	visitPreprocessorLine(ctx: PreprocessorLineContext): ParsedToken[] {
+		let parsedTokens: ParsedToken[] =[];
+		let token = ctx?.type_or_id()?.IDENTIFIER()?.symbol;
+		token && parsedTokens.push({
+			line: token.line - 1, // vscode API starts from 0, while ANTLR4 starts from 1
+			startCharacter: token.charPositionInLine,
+			length: token.stopIndex - token.startIndex + 1,
+			tokenType: "variable",
+			tokenModifiers: ['declaration']
+		});
+		let childExpressionContext = ctx.tryGetChild(0, ExpressionContext);
+		if (childExpressionContext) parsedTokens.concat(super.visit(childExpressionContext));
+		return parsedTokens;
+	}
+	
+	visitEnumDeclaration(ctx: EnumDeclarationContext) {
+		let parsedTokens: ParsedToken[] = [];
+		// parse `name`
+		let nameToken = ctx.name()?.nonTypeName()?.type_or_id()?.IDENTIFIER()?.symbol;
+		nameToken && parsedTokens.push({
+			line: nameToken.line - 1, // vscode API starts from 0, while ANTLR4 starts from 1
+			startCharacter: nameToken.charPositionInLine,
+			length: nameToken.stopIndex - nameToken.startIndex + 1,
+			tokenType: "enum",
+			tokenModifiers: ['declaration']
+		});
+
+		return parsedTokens.concat(super.visitChildren(ctx));
+	}
+
+	visitIdentifierList(ctx: IdentifierListContext) {
+		let parsedTokens: ParsedToken[] = [];
+		// parse `name`
+		let nameToken = ctx.name()?.nonTypeName()?.type_or_id()?.IDENTIFIER()?.symbol;
+		nameToken && parsedTokens.push({
+			line: nameToken.line - 1, // vscode API starts from 0, while ANTLR4 starts from 1
+			startCharacter: nameToken.charPositionInLine,
+			length: nameToken.stopIndex - nameToken.startIndex + 1,
+			tokenType: "variable",
+			tokenModifiers: ['readonly']
+		});
+		return parsedTokens.concat(super.visitChildren(ctx));
+	}
+
+	visitExternDeclaration (ctx: ExternDeclarationContext) {
+		let parsedTokens: ParsedToken[] = [];
+		// parse `name`
+		let nameToken = ctx.name()?.nonTypeName()?.type_or_id()?.IDENTIFIER()?.symbol;
+		nameToken && parsedTokens.push({
+			line: nameToken.line - 1, // vscode API starts from 0, while ANTLR4 starts from 1
+			startCharacter: nameToken.charPositionInLine,
+			length: nameToken.stopIndex - nameToken.startIndex + 1,
+			tokenType: "class",
+			tokenModifiers: ['declaration']
+		});
+		return parsedTokens.concat(super.visitChildren(ctx));
 	}
 	
 }
