@@ -1,5 +1,14 @@
 import { P4Lexer } from './grammar/P4Lexer';
-import { P4Parser, DeclarationContext } from './grammar/P4Parser';
+import { 
+	P4Parser, 
+	DeclarationContext,
+	TypedefDeclarationContext,
+	TypeDeclarationContext,
+	InputContext,
+	ProgramContext,
+	TypeRefContext,
+} from './grammar/P4Parser';
+import { P4Visitor } from './grammar/P4Visitor';
 import { AbstractParseTreeVisitor } from 'antlr4ts/tree/AbstractParseTreeVisitor';
 import { ANTLRInputStream, CommonTokenStream } from 'antlr4ts';
 import * as fs from 'fs';
@@ -32,7 +41,7 @@ export function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(vscode.languages.registerDocumentSemanticTokensProvider({ language: 'p4'}, new DocumentSemanticTokensProvider(), legend));
 }
 
-interface parsedToken {
+interface ParsedToken {
 	line: number;
 	startCharacter: number;
 	length: number;
@@ -40,11 +49,62 @@ interface parsedToken {
 	tokenModifiers: string[];
 }
 
+class SemanticHighlightingVisitor extends AbstractParseTreeVisitor<ParsedToken[]> implements P4Visitor<ParsedToken[]> {
+	defaultResult() {
+		return [];
+	}
+
+	aggregateResult(aggregate: ParsedToken[], nextResult: ParsedToken[]) {
+		return aggregate.concat(nextResult);
+	}
+
+	visitProgram(ctx: ProgramContext) {
+		return super.visitChildren(ctx);
+	}
+
+	visitInput(ctx: InputContext) {
+		return super.visitChildren(ctx);
+	}
+
+	visitDeclaration(ctx: DeclarationContext) {
+		return super.visitChildren(ctx);
+	}
+
+	visitTypeDeclaration(ctx: TypeDeclarationContext) {
+		return super.visitChildren(ctx);
+	}
+
+	visitTypedefDeclaration(ctx: TypedefDeclarationContext) {
+		let token = ctx.name()?.nonTypeName()?.type_or_id()?.IDENTIFIER()?.symbol;
+		if (token == null) return [];
+		return [{
+			line: token.line - 1, // vscode API starts from 0, while ANTLR4 starts from 1
+			startCharacter: token.charPositionInLine,
+			length: token.stopIndex - token.startIndex + 1,
+			tokenType: "class",
+			tokenModifiers: ['declaration']
+		}];
+	}
+
+	visitTypeRef(ctx: TypeRefContext) {
+		let token = ctx.typeName()?.prefixedType()?.type_or_id()?.IDENTIFIER()?.symbol;
+		if (token == null) return [];
+		return [{
+			line: token.line - 1, // vscode API starts from 0, while ANTLR4 starts from 1
+			startCharacter: token.charPositionInLine,
+			length: token.stopIndex - token.startIndex + 1,
+			tokenType: "class",
+			tokenModifiers: ['declaration']
+		}];
+	}
+
+}
+
 class DocumentSemanticTokensProvider implements vscode.DocumentSemanticTokensProvider {
 	async provideDocumentSemanticTokens(document: vscode.TextDocument, token: vscode.CancellationToken): Promise<vscode.SemanticTokens> {
 		const allTokens = this._parseText(document.getText());
 		const builder = new vscode.SemanticTokensBuilder();
-		allTokens.forEach((token: parsedToken) => {
+		allTokens.forEach((token: ParsedToken) => {
 			builder.push(token.line, token.startCharacter, token.length, this._encodeTokenType(token.tokenType), this._encodeTokenModifiers(token.tokenModifiers));
 		});
 		return builder.build();
@@ -72,17 +132,26 @@ class DocumentSemanticTokensProvider implements vscode.DocumentSemanticTokensPro
 		return result;
 	}
 
-	private _parseText(text: string): parsedToken[] {
-		const parsedTokens: parsedToken[] = [];
+	private _parseText(text: string): ParsedToken[] {
 		// Create the lexer and parser
 		const inputStream = new ANTLRInputStream(text);
 		const lexer = new P4Lexer(inputStream);
 		const tokenStream = new CommonTokenStream(lexer);
 		const parser = new P4Parser(tokenStream);
 		
-		// Parse the input, where `compilationUnit` is whatever entry point you defined
 		parser.buildParseTree = true;
 		const tree = parser.program();
+
+		/* This is a sample for highlighting at SEMANTIC level.
+		 * It can highlight any `typeRef` as `class`
+		 */
+		let parsedTokens: ParsedToken[] = [];
+		const semanticHighlightingVisitor = new SemanticHighlightingVisitor();
+		parsedTokens = parsedTokens.concat(semanticHighlightingVisitor.visit(tree));
+		
+		/* This is a sample for highlighting at LEXER level.
+		 * It can highlight all `#INCLUDE`
+		 */
 		tokenStream.fill();
 		const tokens = tokenStream.getTokens();
 		
@@ -92,11 +161,10 @@ class DocumentSemanticTokensProvider implements vscode.DocumentSemanticTokensPro
 					line: token.line - 1, // vscode API starts from 0, while ANTLR4 starts from 1
 					startCharacter: token.charPositionInLine,
 					length: token.stopIndex - token.startIndex + 1,
-					tokenType: "keyword", // TODO
+					tokenType: 'keyword',
 					tokenModifiers: ['declaration']
 				});
 			}
-			
 		});
 		return parsedTokens;
 	}

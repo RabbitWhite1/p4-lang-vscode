@@ -6,6 +6,8 @@ This is a vscode extension for p4-lang.
 
 ## Develop This Extension
 
+### Get Start
+
 1. install npm and node-typescript
   ```shell
   sudo apt-get install npm
@@ -27,6 +29,18 @@ This is a vscode extension for p4-lang.
 
 You can refer to this [official document](https://code.visualstudio.com/api/get-started/your-first-extension) for more help! Have fun!😃
 
+### What's in the folder
+
+* This folder contains all of the files necessary for your extension.
+* `package.json` - this is the manifest file in which you declare your language support and define the location of the grammar file that has been copied into your extension.
+* `syntaxes/p4.tmLanguage.json` - this is the Text mate grammar file that is used for tokenization.
+* `language-configuration.json` - this is the language configuration, defining the tokens that are used for comments and brackets.
+
+### Install your extension
+
+* To start using your extension with Visual Studio Code copy it into the `<user home>/.vscode/extensions` folder and restart Code.
+* To share your extension with the world, read on https://code.visualstudio.com/docs about publishing an extension.
+
 ## Known Issues
 
 - I am just a starter of vscode extension, looking forward to more people to join me.
@@ -39,3 +53,4 @@ You can refer to this [official document](https://code.visualstudio.com/api/get-
 ### Semantic
 
 - Now only a sample semantic highlight for `#include`, I will plan to completely do this.
+- TODO: provide a `TypeDefinitionProvider`
