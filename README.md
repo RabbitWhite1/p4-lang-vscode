@@ -52,5 +52,10 @@ You can refer to this [official document](https://code.visualstudio.com/api/get-
 
 ### Semantic
 
-- Now only a sample semantic highlight for `#include`, I will plan to completely do this.
+- At lexer level, only a highlight for `#include`, I will plan to completely do this.
+- At parser level, only a visitor for highlighting `structField`
 - TODO: provide a `TypeDefinitionProvider`
+
+## Thanks
+
+The ANTLR4 grammar file is based on [fattaholmanan/p4-vscode-extension](https://github.com/fattaholmanan/p4-vscode-extension)'s. Thanks to their publication.

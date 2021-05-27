@@ -3,3 +3,4 @@ node_modules
 src/extension.ts
 out
 *.bak
+/test

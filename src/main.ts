@@ -7,6 +7,7 @@ import {
 	InputContext,
 	ProgramContext,
 	TypeRefContext,
+	StructFieldContext
 } from './grammar/P4Parser';
 import { P4Visitor } from './grammar/P4Visitor';
 import { AbstractParseTreeVisitor } from 'antlr4ts/tree/AbstractParseTreeVisitor';
@@ -86,16 +87,28 @@ class SemanticHighlightingVisitor extends AbstractParseTreeVisitor<ParsedToken[]
 		}];
 	}
 
-	visitTypeRef(ctx: TypeRefContext) {
-		let token = ctx.typeName()?.prefixedType()?.type_or_id()?.IDENTIFIER()?.symbol;
-		if (token == null) return [];
-		return [{
-			line: token.line - 1, // vscode API starts from 0, while ANTLR4 starts from 1
-			startCharacter: token.charPositionInLine,
-			length: token.stopIndex - token.startIndex + 1,
+	visitStructField(ctx: StructFieldContext) {
+		let parsedTokens: ParsedToken[] = [];
+		// parse `typeRef`
+		let typeRefToken = ctx.typeRef()?.typeName()?.prefixedType()?.type_or_id()?.IDENTIFIER()?.symbol;
+		typeRefToken && parsedTokens.push({
+			line: typeRefToken.line - 1, // vscode API starts from 0, while ANTLR4 starts from 1
+			startCharacter: typeRefToken.charPositionInLine,
+			length: typeRefToken.stopIndex - typeRefToken.startIndex + 1,
 			tokenType: "class",
 			tokenModifiers: ['declaration']
-		}];
+		});
+		// parse `name`
+		let nameToken = ctx.name()?.nonTypeName()?.type_or_id()?.IDENTIFIER()?.symbol;
+		nameToken && parsedTokens.push({
+			line: nameToken.line - 1, // vscode API starts from 0, while ANTLR4 starts from 1
+			startCharacter: nameToken.charPositionInLine,
+			length: nameToken.stopIndex - nameToken.startIndex + 1,
+			tokenType: "variable",
+			tokenModifiers: ['declaration']
+		});
+		
+		return parsedTokens;
 	}
 
 }
@@ -143,7 +156,7 @@ class DocumentSemanticTokensProvider implements vscode.DocumentSemanticTokensPro
 		const tree = parser.program();
 
 		/* This is a sample for highlighting at SEMANTIC level.
-		 * It can highlight any `typeRef` as `class`
+		 * It can highlight any `typeRef` as `class` and `name` as `variable` in `structField`.
 		 */
 		let parsedTokens: ParsedToken[] = [];
 		const semanticHighlightingVisitor = new SemanticHighlightingVisitor();
