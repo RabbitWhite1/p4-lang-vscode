@@ -300,10 +300,7 @@ export class P4Parser extends Parser {
 		"'_'", "'&&&'", "'..'", "'<<'", "'&&'", "'||'", "'=='", "'!='", "'>='", 
 		"'<='", "'++'", "'+'", "'|+|'", "'-'", "'|-|'", "'*'", "'/'", "'%'", "'|'", 
 		"'&'", "'^'", "'~'", "'('", "')'", "'['", "']'", "'{'", "'}'", "'<'", 
-		"'>'", "'!'", "':'", "','", "'?'", "'.'", "'='", "';'", "'@'", "'<*>.|\n'", 
-		undefined, undefined, undefined, undefined, "'#include'", "'#define'", 
-		"'#undef'", "'#ifdef'", "'#ifndef'", "'#elseif'", "'#endif'", "'#line'", 
-		"'#if'", "'#else'",
+		"'>'", "'!'", "':'", "','", "'?'", "'.'", "'='", "';'", "'@'", "'<*>.|\n'",
 	];
 	private static readonly _SYMBOLIC_NAMES: Array<string | undefined> = [
 		undefined, undefined, undefined, "PRAGMA", "ABSTRACT", "ACTION", "ACTIONS", 

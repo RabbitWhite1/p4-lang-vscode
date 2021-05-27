@@ -925,16 +925,16 @@ LINE_COMMENT 				: '//' ~[\r\n]* -> skip;
 fragment ESCAPED_QUOTE 		: '\\"';
 STRING_LITERAL 				: '"' ( ESCAPED_QUOTE | ~('\n'|'\r') )*? '"';
 
-PREPROC_INCLUDE				: '#include';
-PREPROC_DEFINE				: '#define';
-PREPROC_UNDEF				: '#undef';
-PREPROC_IFDEF				: '#ifdef';
-PREPROC_IFNDEF				: '#ifndef';
-PREPROC_ELSEIF				: '#elseif';
-PREPROC_ENDIF				: '#endif';
-PREPROC_LINE				: '#line';
-PREPROC_IF					: '#if';
-PREPROC_ELSE				: '#else';
+PREPROC_INCLUDE				: '#include' .*? [\r\n]+ -> skip;
+PREPROC_DEFINE				: '#define' .*? [\r\n]+ -> skip;
+PREPROC_UNDEF				: '#undef' .*? [\r\n]+ -> skip;
+PREPROC_IFDEF				: '#ifdef' .*? [\r\n]+ -> skip;
+PREPROC_IFNDEF				: '#ifndef' .*? [\r\n]+ -> skip;
+PREPROC_ELSEIF				: '#elseif' .*? [\r\n]+ -> skip;
+PREPROC_ENDIF				: '#endif' .*? [\r\n]+ -> skip;
+PREPROC_LINE				: '#line' .*? [\r\n]+ -> skip;
+PREPROC_IF					: '#if' .*? [\r\n]+ -> skip;
+PREPROC_ELSE				: '#else' .*? [\r\n]+ -> skip;
 PREPROC_ARG 				: '##'[A-Za-z_][A-Za-z0-9_]* -> channel(HIDDEN) ;
 
 // end of added by Ali
