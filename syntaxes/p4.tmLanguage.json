@@ -30,6 +30,12 @@
       "include": "#strings"
     },
     {
+      "include": "#macros"
+    },
+    {
+      "include": "#imports"
+    },
+    {
       "include": "#typedefs"
     },
     {
@@ -146,6 +152,14 @@
         },
         "4": {
           "name": "string.quoted.double.p4"
+        }
+      }
+    },
+    "macros": {
+      "match": "(#include|#else|#endif|#if\\s+|#define|#ifndef)",
+      "captures": {
+        "1": {
+          "name": "keyword.control.p4"
         }
       }
     },
