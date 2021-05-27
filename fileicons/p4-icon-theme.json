@@ -1,0 +1,15 @@
+{
+	"iconDefinitions": {
+		"p4_file": {
+			"iconPath": "./images/p4_20x20.png"
+		}
+	},
+	"file": "_file_dark",
+	"fileExtensions": {
+		"p4": "p4_file"
+	},
+	"languageIds": {
+		"p4": "p4_file"
+	},
+	"highContrast": {}
+}
