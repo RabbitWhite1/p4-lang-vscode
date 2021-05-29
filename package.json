@@ -2,7 +2,7 @@
     "name": "p4-lang",
     "displayName": "p4-lang",
     "description": "p4 language support in vscode",
-    "version": "0.0.5",
+    "version": "0.0.7",
     "repository": "https://github.com/RabbitWhite1/p4-lang-vscode",
     "publisher": "ZhanghanWang",
     "engines": {
