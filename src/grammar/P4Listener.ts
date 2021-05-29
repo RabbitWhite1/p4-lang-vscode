@@ -26,6 +26,7 @@ import { ParameterContext } from "./P4Parser";
 import { DirectionContext } from "./P4Parser";
 import { PackageTypeDeclarationContext } from "./P4Parser";
 import { InstantiationContext } from "./P4Parser";
+import { MainInstantiationContext } from "./P4Parser";
 import { ObjInitializerContext } from "./P4Parser";
 import { ObjDeclarationsContext } from "./P4Parser";
 import { ObjDeclarationContext } from "./P4Parser";
@@ -387,6 +388,17 @@ export interface P4Listener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	exitInstantiation?: (ctx: InstantiationContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `P4Parser.mainInstantiation`.
+	 * @param ctx the parse tree
+	 */
+	enterMainInstantiation?: (ctx: MainInstantiationContext) => void;
+	/**
+	 * Exit a parse tree produced by `P4Parser.mainInstantiation`.
+	 * @param ctx the parse tree
+	 */
+	exitMainInstantiation?: (ctx: MainInstantiationContext) => void;
 
 	/**
 	 * Enter a parse tree produced by `P4Parser.objInitializer`.

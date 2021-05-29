@@ -33,7 +33,8 @@ import {
 	MethodCallContext,
 	ActionBindingContext,
 	ConditionalStatementContext,
-	DirectApplicationContext
+	DirectApplicationContext,
+	MainInstantiationContext
 } from './grammar/P4Parser';
 import { P4Visitor } from './grammar/P4Visitor';
 import { AbstractParseTreeVisitor } from 'antlr4ts/tree/AbstractParseTreeVisitor';
@@ -560,8 +561,26 @@ class SemanticHighlightingVisitor extends AbstractParseTreeVisitor<ParsedToken[]
 		});
 		return parsedTokens.concat(super.visitChildren(ctx));
 	}
-	visitConditionalStatement(ctx: ConditionalStatementContext) {
-		return super.visitChildren(ctx);
+	visitMainInstantiation(ctx: MainInstantiationContext) {
+		let parsedTokens: ParsedToken[] = [];
+		// parse `name`
+		let nameToken = ctx.name()?.nonTypeName()?.type_or_id()?.IDENTIFIER()?.symbol;
+		nameToken && parsedTokens.push({
+			line: nameToken.line - 1, // vscode API starts from 0, while ANTLR4 starts from 1
+			startCharacter: nameToken.charPositionInLine,
+			length: nameToken.stopIndex - nameToken.startIndex + 1,
+			tokenType: "class",
+			tokenModifiers: []
+		});
+		let applyToken = ctx.MAIN().symbol;
+		applyToken && parsedTokens.push({
+			line: applyToken.line - 1, // vscode API starts from 0, while ANTLR4 starts from 1
+			startCharacter: applyToken.charPositionInLine,
+			length: applyToken.stopIndex - applyToken.startIndex + 1,
+			tokenType: "variable",
+			tokenModifiers: []
+		});
+		return parsedTokens.concat(super.visitChildren(ctx));
 	}
 
 	visitMethodCall(ctx: MethodCallContext) {

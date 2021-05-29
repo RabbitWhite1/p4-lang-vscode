@@ -242,6 +242,11 @@ instantiation
 	| annotations typeRef '(' argumentList ')' name '=' objInitializer ';'
 	/* experimental */
 	| typeRef '(' argumentList ')' name '=' objInitializer ';'
+    | mainInstantiation
+    ;
+
+mainInstantiation
+    : name '(' argumentList ')' 'main' ';'
     ;
 
 objInitializer

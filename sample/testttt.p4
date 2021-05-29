@@ -1,10 +1,8 @@
-control MyIngress() {
-    apply {
-        if (hdr.p4calc.isValid()) {
-            calculate.apply();
-        } 
-        else {
-            operation_drop();
-        }
-    }
-}
+V1Switch(
+    MyParser(),
+    MyVerifyChecksum(),
+    MyIngress(),
+    MyEgress(),
+    MyComputeChecksum(),
+    MyDeparser()
+    ) main;
