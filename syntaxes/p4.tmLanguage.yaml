@@ -9,8 +9,6 @@ patterns:
   - include: "#builtin_types"
   - include: "#buildin_variables"
   # numerics
-  - include: "#dec_numerics"
-  - include: "#bin_numerics"
   - include: "#numerics"
   - include: "#bits"
   # strings
@@ -48,16 +46,8 @@ repository:
     name: storage.type.p4
     match: \b(true|false)\b
   # numerics
-  dec_numerics:
-    match: \W+(0x\d+)
-    captures: 
-      "1": { name: constant.numeric.p4 }
-  bin_numerics:
-    match: \W+(\d+w\d+)
-    captures: 
-      "1": { name: constant.numeric.p4 }
   numerics:
-    match: \W+(\d+)
+    match: (0x(\d|[a-e])+|\d+w\d+|\d+)
     captures: 
       "1": { name: constant.numeric.p4 }
   bits:

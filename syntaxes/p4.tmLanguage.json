@@ -15,12 +15,6 @@
       "include": "#buildin_variables"
     },
     {
-      "include": "#dec_numerics"
-    },
-    {
-      "include": "#bin_numerics"
-    },
-    {
       "include": "#numerics"
     },
     {
@@ -89,24 +83,8 @@
       "name": "storage.type.p4",
       "match": "\\b(true|false)\\b"
     },
-    "dec_numerics": {
-      "match": "\\W+(0x\\d+)",
-      "captures": {
-        "1": {
-          "name": "constant.numeric.p4"
-        }
-      }
-    },
-    "bin_numerics": {
-      "match": "\\W+(\\d+w\\d+)",
-      "captures": {
-        "1": {
-          "name": "constant.numeric.p4"
-        }
-      }
-    },
     "numerics": {
-      "match": "\\W+(\\d+)",
+      "match": "(0x(\\d|[a-e])+|\\d+w\\d+|\\d+)",
       "captures": {
         "1": {
           "name": "constant.numeric.p4"
