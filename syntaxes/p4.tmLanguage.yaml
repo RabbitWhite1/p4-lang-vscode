@@ -43,7 +43,7 @@ repository:
         match: (if|return|error|default|transition|select)
   builtin_types:
     name: storage.type.p4
-    match: (inout|in|out|packet_in|packet_out|bool|void|extern|enum|const)
+    match: (inout|in|out|packet_in|packet_out|bool|void|extern|enum|const|match_kind)
   buildin_variables:
     name: storage.type.p4
     match: \b(true|false)\b
