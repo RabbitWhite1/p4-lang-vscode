@@ -88,6 +88,7 @@ import { ErrorDeclarationContext } from "./P4Parser";
 import { MatchKindDeclarationContext } from "./P4Parser";
 import { IdentifierListContext } from "./P4Parser";
 import { TypedefDeclarationContext } from "./P4Parser";
+import { MethodCallContext } from "./P4Parser";
 import { AssignmentOrMethodCallStatementContext } from "./P4Parser";
 import { EmptyStatementContext } from "./P4Parser";
 import { ExitStatementContext } from "./P4Parser";
@@ -731,6 +732,13 @@ export interface P4Visitor<Result> extends ParseTreeVisitor<Result> {
 	 * @return the visitor result
 	 */
 	visitTypedefDeclaration?: (ctx: TypedefDeclarationContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `P4Parser.methodCall`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitMethodCall?: (ctx: MethodCallContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by `P4Parser.assignmentOrMethodCallStatement`.

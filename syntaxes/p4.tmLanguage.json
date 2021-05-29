@@ -77,13 +77,13 @@
       "patterns": [
         {
           "name": "keyword.control.p4",
-          "match": "(if|return|error|default|transition|select)"
+          "match": "(if|else|return|error|default|transition|select)"
         }
       ]
     },
     "builtin_types": {
       "name": "storage.type.p4",
-      "match": "(inout|in|out|packet_in|packet_out|bool|void|extern|enum|const|match_kind)"
+      "match": "(inout|in|out|packet_in|packet_out|bool|void|extern|enum|const|match_kind|package)"
     },
     "buildin_variables": {
       "name": "storage.type.p4",

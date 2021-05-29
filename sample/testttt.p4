@@ -1,6 +1,10 @@
-
-enum CounterType {
-    packets,
-    bytes,
-    packets_and_bytes
+control MyIngress() {
+    apply {
+        if (hdr.p4calc.isValid()) {
+            calculate.apply();
+        } 
+        else {
+            operation_drop();
+        }
+    }
 }

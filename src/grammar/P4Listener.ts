@@ -88,6 +88,7 @@ import { ErrorDeclarationContext } from "./P4Parser";
 import { MatchKindDeclarationContext } from "./P4Parser";
 import { IdentifierListContext } from "./P4Parser";
 import { TypedefDeclarationContext } from "./P4Parser";
+import { MethodCallContext } from "./P4Parser";
 import { AssignmentOrMethodCallStatementContext } from "./P4Parser";
 import { EmptyStatementContext } from "./P4Parser";
 import { ExitStatementContext } from "./P4Parser";
@@ -1068,6 +1069,17 @@ export interface P4Listener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	exitTypedefDeclaration?: (ctx: TypedefDeclarationContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `P4Parser.methodCall`.
+	 * @param ctx the parse tree
+	 */
+	enterMethodCall?: (ctx: MethodCallContext) => void;
+	/**
+	 * Exit a parse tree produced by `P4Parser.methodCall`.
+	 * @param ctx the parse tree
+	 */
+	exitMethodCall?: (ctx: MethodCallContext) => void;
 
 	/**
 	 * Enter a parse tree produced by `P4Parser.assignmentOrMethodCallStatement`.

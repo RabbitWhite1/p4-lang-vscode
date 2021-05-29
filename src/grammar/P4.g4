@@ -235,7 +235,7 @@ packageTypeDeclaration
       '(' parameterList ')'
     ;
 
-instantiation	
+instantiation
 	: annotations typeRef '(' argumentList ')' name ';'
 	| typeRef '(' argumentList ')' name ';'
 	/* experimental */
@@ -578,10 +578,14 @@ typedefDeclaration
     | optAnnotations TYPE derivedTypeDeclaration name
     ;
 
+methodCall
+    : lvalue '(' argumentList ')'
+    | lvalue '<' typeArgumentList '>' '(' argumentList ')'
+    ;
+
 assignmentOrMethodCallStatement
     // These rules are overly permissive, but they avoid some conflicts
-    : lvalue '(' argumentList ')' ';'
-    | lvalue '<' typeArgumentList '>' '(' argumentList ')' ';'
+    : methodCall';'
     | lvalue '=' expression ';'
     ;
 
@@ -666,7 +670,8 @@ tablePropertyList
 tableProperty
     : KEY '=' '{' keyElementList '}'
     | ACTIONS '=' '{' actionList '}'
-    | DEFAULT_ACTION '=' name ';'
+    | optAnnotations optCONST DEFAULT_ACTION '=' name ';'
+    | optAnnotations optCONST DEFAULT_ACTION '=' actionBinding optAnnotations ';'
     | optAnnotations optCONST ENTRIES '=' '{' entriesList '}'
     | optAnnotations optCONST nonTableKwName '=' initializer ';'
     ;
@@ -806,11 +811,12 @@ expression
     | expression '&&' expression
     | expression '||' expression
     | expression '?' expression ':' expression
+    | methodCall
     | expression '<' realTypeArgumentList '>' '(' argumentList ')'
     // FIXME: the previous rule has the wrong precedence, and parses with
     // precedence weaker than casts.  There is no easy way to fix this in bison.
-    | expression '(' argumentList ')'
-    | namedType '(' argumentList ')'
+    // | expression '(' argumentList ')'
+    // | namedType '(' argumentList ')'
 	| '(' typeRef ')' expression // %prec PREFIX 
     ;
 
@@ -928,26 +934,26 @@ LINE_COMMENT 				: '//' ~[\r\n]* -> skip;
 fragment ESCAPED_QUOTE 		: '\\"';
 STRING_LITERAL 				: '"' ( ESCAPED_QUOTE | ~('\n'|'\r') )*? '"';
 
-// PREPROC_INCLUDE				: '#include' .*? [\r\n]+ -> skip;
-// PREPROC_DEFINE				: '#define' .*? [\r\n]+ -> skip;
-// PREPROC_UNDEF				: '#undef' .*? [\r\n]+ -> skip;
-// PREPROC_IFDEF				: '#ifdef' .*? [\r\n]+ -> skip;
-// PREPROC_IFNDEF				: '#ifndef' .*? [\r\n]+ -> skip;
-// PREPROC_ELSEIF				: '#elseif' .*? [\r\n]+ -> skip;
-// PREPROC_ENDIF				: '#endif' .*? [\r\n]+ -> skip;
-// PREPROC_LINE				: '#line' .*? [\r\n]+ -> skip;
-// PREPROC_IF					: '#if' .*? [\r\n]+ -> skip;
-// PREPROC_ELSE				: '#else' .*? [\r\n]+ -> skip;
-PREPROC_INCLUDE				: '#include';
-PREPROC_DEFINE				: '#define';
-PREPROC_UNDEF				: '#undef' ;
-PREPROC_IFDEF				: '#ifdef' ;
-PREPROC_IFNDEF				: '#ifndef';
-PREPROC_ELSEIF				: '#elseif';
-PREPROC_ENDIF				: '#endif' ;
-PREPROC_LINE				: '#line' ;
-PREPROC_IF					: '#if' ;
-PREPROC_ELSE				: '#else' ;
+PREPROC_INCLUDE				: '#include' .*? [\r\n]+ -> skip;
+PREPROC_DEFINE				: '#define' .*? [\r\n]+ -> skip;
+PREPROC_UNDEF				: '#undef' .*? [\r\n]+ -> skip;
+PREPROC_IFDEF				: '#ifdef' .*? [\r\n]+ -> skip;
+PREPROC_IFNDEF				: '#ifndef' .*? [\r\n]+ -> skip;
+PREPROC_ELSEIF				: '#elseif' .*? [\r\n]+ -> skip;
+PREPROC_ENDIF				: '#endif' .*? [\r\n]+ -> skip;
+PREPROC_LINE				: '#line' .*? [\r\n]+ -> skip;
+PREPROC_IF					: '#if' .*? [\r\n]+ -> skip;
+PREPROC_ELSE				: '#else' .*? [\r\n]+ -> skip;
+// PREPROC_INCLUDE				: '#include';
+// PREPROC_DEFINE				: '#define';
+// PREPROC_UNDEF				: '#undef' ;
+// PREPROC_IFDEF				: '#ifdef' ;
+// PREPROC_IFNDEF				: '#ifndef';
+// PREPROC_ELSEIF				: '#elseif';
+// PREPROC_ENDIF				: '#endif' ;
+// PREPROC_LINE				: '#line' ;
+// PREPROC_IF					: '#if' ;
+// PREPROC_ELSE				: '#else' ;
 PREPROC_ARG 				: '##'[A-Za-z_][A-Za-z0-9_]* -> channel(HIDDEN) ;
 
 // end of added by Ali
