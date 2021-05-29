@@ -662,6 +662,8 @@ tablePropertyList
 tableProperty
     : KEY '=' '{' keyElementList '}'
     | ACTIONS '=' '{' actionList '}'
+    | SIZE '=' expression ';'
+    | DEFAULT_ACTION '=' name ';'
     | optAnnotations optCONST ENTRIES '=' '{' entriesList '}'
     | optAnnotations optCONST nonTableKwName '=' initializer ';'
     ;
@@ -838,6 +840,7 @@ BIT							: 'bit';
 CONST						: 'const';
 CONTROL						: 'control';
 DEFAULT						: 'default';
+DEFAULT_ACTION              : 'default_action';
 ELSE						: 'else';
 ENTRIES						: 'entries';
 ENUM						: 'enum';
@@ -852,6 +855,7 @@ IN							: 'in';
 INOUT						: 'inout';
 INT							: 'int';
 KEY							: 'key';
+MAIN                        : 'main';
 MATCH_KIND					: 'match_kind';
 TYPE						: 'type';
 OUT							: 'out';
@@ -859,6 +863,7 @@ PARSER						: 'parser';
 PACKAGE						: 'package';
 RETURN						: 'return';
 SELECT						: 'select';
+SIZE                        : 'size';
 STATE						: 'state';
 MEGA_STATE					: 'mega_state';
 STRUCT						: 'struct';

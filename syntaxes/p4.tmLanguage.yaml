@@ -31,8 +31,6 @@ patterns:
   - include: "#tables"
   # member
   - include: "#member_visits"
-  # function
-  - include: "#function_calls"
   # comments
   - include: "#lineComments"
   - include: "#blockComments"
@@ -42,12 +40,12 @@ repository:
   keywords:
     patterns:
       - name: keyword.control.p4
-        match: \b(if|return|error|default|transition)\b
+        match: (if|return|error|default|transition|select)
   builtin_types:
     name: storage.type.p4
-    match: ([^\w\d_])+(inout|in|out|packet_in|packet_out|bool|void|extern|enum)[^\w\d_]+
+    match: (inout|in|out|packet_in|packet_out|bool|void|extern|enum|const)
   buildin_variables:
-    name: support.variable.p4
+    name: storage.type.p4
     match: \b(true|false)\b
   # numerics
   dec_numerics:
@@ -147,10 +145,6 @@ repository:
     match: \s*\.\s*([_\w][\w\d_]*)
     captures:
       "1": { name: variable.name.p4 }
-  function_calls:
-    match: (?:\s*|\.)([_\w][\w\d_]*)\s*\(
-    captures:
-      "1": { name: entity.name.function.p4 }
   member_visits:
     match: \s*([_\w][\w\d_]*)(\.[\w.]+)\s*
     captures:

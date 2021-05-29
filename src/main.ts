@@ -9,7 +9,16 @@ import {
 	TypeRefContext,
 	StructFieldContext,
 	ParameterContext,
-	VariableDeclarationContext
+	VariableDeclarationContext,
+	ConstantDeclarationContext,
+	SelectCaseContext,
+	StateExpressionContext,
+	TablePropertyContext,
+	KeyElementContext,
+	ActionRefContext,
+	LvalueContext,
+	AssignmentOrMethodCallStatementContext,
+	ExpressionContext
 } from './grammar/P4Parser';
 import { P4Visitor } from './grammar/P4Visitor';
 import { AbstractParseTreeVisitor } from 'antlr4ts/tree/AbstractParseTreeVisitor';
@@ -59,22 +68,6 @@ class SemanticHighlightingVisitor extends AbstractParseTreeVisitor<ParsedToken[]
 
 	aggregateResult(aggregate: ParsedToken[], nextResult: ParsedToken[]) {
 		return aggregate.concat(nextResult);
-	}
-
-	visitProgram(ctx: ProgramContext) {
-		return super.visitChildren(ctx);
-	}
-
-	visitInput(ctx: InputContext) {
-		return super.visitChildren(ctx);
-	}
-
-	visitDeclaration(ctx: DeclarationContext) {
-		return super.visitChildren(ctx);
-	}
-
-	visitTypeDeclaration(ctx: TypeDeclarationContext) {
-		return super.visitChildren(ctx);
 	}
 
 	visitTypedefDeclaration(ctx: TypedefDeclarationContext) {
@@ -160,7 +153,179 @@ class SemanticHighlightingVisitor extends AbstractParseTreeVisitor<ParsedToken[]
 		
 		return parsedTokens;
 	}
+
+	visitConstantDeclaration(ctx: ConstantDeclarationContext) {
+		let parsedTokens: ParsedToken[] = [];
+		// parse `name`
+		let nameToken = ctx.name()?.nonTypeName()?.type_or_id()?.IDENTIFIER()?.symbol;
+		nameToken && parsedTokens.push({
+			line: nameToken.line - 1, // vscode API starts from 0, while ANTLR4 starts from 1
+			startCharacter: nameToken.charPositionInLine,
+			length: nameToken.stopIndex - nameToken.startIndex + 1,
+			tokenType: "variable",
+			tokenModifiers: ['declaration', 'readonly']
+		});
+		
+		return parsedTokens;
+	}
+
+	visitSelectCase(ctx: SelectCaseContext) {
+		let parsedTokens: ParsedToken[] = [];
+		// parse `name`
+		let nameToken = ctx.name()?.nonTypeName()?.type_or_id()?.IDENTIFIER()?.symbol;
+		nameToken && parsedTokens.push({
+			line: nameToken.line - 1, // vscode API starts from 0, while ANTLR4 starts from 1
+			startCharacter: nameToken.charPositionInLine,
+			length: nameToken.stopIndex - nameToken.startIndex + 1,
+			tokenType: "class",
+			tokenModifiers: []
+		});
+		
+		return parsedTokens;
+	}
 	
+	visitStateExpression(ctx: StateExpressionContext) {
+		let parsedTokens: ParsedToken[] = [];
+		// parse `name`
+		let nameToken = ctx.name()?.nonTypeName()?.type_or_id()?.IDENTIFIER()?.symbol;
+		nameToken && parsedTokens.push({
+			line: nameToken.line - 1, // vscode API starts from 0, while ANTLR4 starts from 1
+			startCharacter: nameToken.charPositionInLine,
+			length: nameToken.stopIndex - nameToken.startIndex + 1,
+			tokenType: "class",
+			tokenModifiers: []
+		});
+		
+		return parsedTokens.concat(super.visitChildren(ctx));
+	}
+
+	visitTableProperty(ctx: TablePropertyContext) {
+		let parsedTokens: ParsedToken[] = [];
+		// parse `KEY`
+		let keyToken = ctx?.KEY()?.symbol;
+		keyToken && parsedTokens.push({
+			line: keyToken.line - 1, // vscode API starts from 0, while ANTLR4 starts from 1
+			startCharacter: keyToken.charPositionInLine,
+			length: keyToken.stopIndex - keyToken.startIndex + 1,
+			tokenType: "parameter",
+			tokenModifiers: []
+		});
+		// parse `ACTIONS`
+		let actionsToken = ctx?.ACTIONS()?.symbol;
+		actionsToken && parsedTokens.push({
+			line: actionsToken.line - 1, // vscode API starts from 0, while ANTLR4 starts from 1
+			startCharacter: actionsToken.charPositionInLine,
+			length: actionsToken.stopIndex - actionsToken.startIndex + 1,
+			tokenType: "parameter",
+			tokenModifiers: []
+		});
+		// parse `ENTRIES`
+		let entriesToken = ctx?.ENTRIES()?.symbol;
+		entriesToken && parsedTokens.push({
+			line: entriesToken.line - 1, // vscode API starts from 0, while ANTLR4 starts from 1
+			startCharacter: entriesToken.charPositionInLine,
+			length: entriesToken.stopIndex - entriesToken.startIndex + 1,
+			tokenType: "parameter",
+			tokenModifiers: []
+		});
+		// parse `SIZE`
+		let sizeToken = ctx?.SIZE()?.symbol;
+		sizeToken && parsedTokens.push({
+			line: sizeToken.line - 1, // vscode API starts from 0, while ANTLR4 starts from 1
+			startCharacter: sizeToken.charPositionInLine,
+			length: sizeToken.stopIndex - sizeToken.startIndex + 1,
+			tokenType: "parameter",
+			tokenModifiers: []
+		});
+		// parse `DEFAULT_ACTION`
+		let defaultActionToken = ctx?.DEFAULT_ACTION()?.symbol;
+		if (defaultActionToken) {
+			parsedTokens.push({
+				line: defaultActionToken.line - 1, // vscode API starts from 0, while ANTLR4 starts from 1
+				startCharacter: defaultActionToken.charPositionInLine,
+				length: defaultActionToken.stopIndex - defaultActionToken.startIndex + 1,
+				tokenType: "parameter",
+				tokenModifiers: []
+			});
+			// parse `name`
+			let nameToken = ctx.name()?.nonTypeName()?.type_or_id()?.IDENTIFIER()?.symbol;
+			nameToken && parsedTokens.push({
+				line: nameToken.line - 1, // vscode API starts from 0, while ANTLR4 starts from 1
+				startCharacter: nameToken.charPositionInLine,
+				length: nameToken.stopIndex - nameToken.startIndex + 1,
+				tokenType: "method",
+				tokenModifiers: []
+			});
+		}
+
+		return parsedTokens.concat(super.visitChildren(ctx));
+	}
+
+	visitKeyElement(ctx: KeyElementContext) {
+		let parsedTokens: ParsedToken[] = [];
+		// parse `name`
+		let nameToken = ctx.name()?.nonTypeName()?.type_or_id()?.IDENTIFIER()?.symbol;
+		nameToken && parsedTokens.push({
+			line: nameToken.line - 1, // vscode API starts from 0, while ANTLR4 starts from 1
+			startCharacter: nameToken.charPositionInLine,
+			length: nameToken.stopIndex - nameToken.startIndex + 1,
+			tokenType: "enum",
+			tokenModifiers: ['readonly']
+		});
+		return parsedTokens;
+	}
+
+	visitActionRef(ctx: ActionRefContext) {
+		let parsedTokens: ParsedToken[] = [];
+		// parse `name`
+		let nameToken = ctx.name()?.nonTypeName()?.type_or_id()?.IDENTIFIER()?.symbol;
+		nameToken && parsedTokens.push({
+			line: nameToken.line - 1, // vscode API starts from 0, while ANTLR4 starts from 1
+			startCharacter: nameToken.charPositionInLine,
+			length: nameToken.stopIndex - nameToken.startIndex + 1,
+			tokenType: "method",
+			tokenModifiers: []
+		});
+		return parsedTokens;
+	}
+
+	visitLvalue(ctx: LvalueContext) {
+		let parsedTokens: ParsedToken[] = [];
+		// parse `name`
+		let nameToken = ctx.name()?.nonTypeName()?.type_or_id()?.IDENTIFIER()?.symbol;
+		nameToken && parsedTokens.push({
+			line: nameToken.line - 1, // vscode API starts from 0, while ANTLR4 starts from 1
+			startCharacter: nameToken.charPositionInLine,
+			length: nameToken.stopIndex - nameToken.startIndex + 1,
+			tokenType: "variable",
+			tokenModifiers: []
+		});
+		// parse `prefixedNonTypeName`
+		let prefixedNonTypeNameToken = ctx.prefixedNonTypeName()?.nonTypeName()?.type_or_id()?.IDENTIFIER()?.symbol;
+		prefixedNonTypeNameToken && parsedTokens.push({
+			line: prefixedNonTypeNameToken.line - 1, // vscode API starts from 0, while ANTLR4 starts from 1
+			startCharacter: prefixedNonTypeNameToken.charPositionInLine,
+			length: prefixedNonTypeNameToken.stopIndex - prefixedNonTypeNameToken.startIndex + 1,
+			tokenType: "variable",
+			tokenModifiers: []
+		});
+		return parsedTokens.concat(super.visitChildren(ctx));
+	}
+
+	visitExpression(ctx: ExpressionContext) {
+		let parsedTokens: ParsedToken[] = [];
+		// parse `name`
+		let nameToken = ctx?.nonTypeName()?.type_or_id()?.IDENTIFIER()?.symbol;
+		nameToken && parsedTokens.push({
+			line: nameToken.line - 1, // vscode API starts from 0, while ANTLR4 starts from 1
+			startCharacter: nameToken.charPositionInLine,
+			length: nameToken.stopIndex - nameToken.startIndex + 1,
+			tokenType: "variable",
+			tokenModifiers: []
+		});
+		return parsedTokens.concat(super.visitChildren(ctx));
+	}
+
 }
 
 class DocumentSemanticTokensProvider implements vscode.DocumentSemanticTokensProvider {

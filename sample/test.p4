@@ -4,7 +4,7 @@
 
 typedef bit<48> EthernetAddress;
 typedef bit<32> IPv4Address;
-
+const bit<32> t = 6;
 header ethernet_t {
     EthernetAddress dst_addr;
     EthernetAddress src_addr;
