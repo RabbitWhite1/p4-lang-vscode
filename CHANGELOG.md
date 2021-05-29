@@ -1,5 +1,6 @@
 # Change Log
 
+- 0.0.10: fix `numeric` again
 - 0.0.9: fix `numerics`
 - 0.0.8: support `package`, better support for `methodCall`
 - 0.0.7: support `extern`

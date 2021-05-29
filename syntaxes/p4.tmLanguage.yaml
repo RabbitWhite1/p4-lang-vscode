@@ -47,7 +47,7 @@ repository:
     match: \b(true|false)\b
   # numerics
   numerics:
-    match: (0x(\d|[a-e])+|\d+w\d+|\d+)
+    match: \W+(0x(\d|[a-e])+|\d+w\d+|\d+)\W+
     captures: 
       "1": { name: constant.numeric.p4 }
   bits:
