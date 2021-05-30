@@ -1,3 +1,3 @@
-type  ClassOfServiceInHeaderUint_t ClassOfServiceInHeader_t;
-type bit<4> test;
-header asd 
+struct headers {
+    tuple<ia>   tuple3;
+}

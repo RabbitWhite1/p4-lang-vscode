@@ -79,7 +79,7 @@
       }
     },
     "builtin_types": {
-      "match": "\\b(inout|in|out|packet_in|packet_out|bool|void|extern|enum|const|match_kind|package)\\b",
+      "match": "\\b(tuple|inout|in|out|packet_in|packet_out|bool|void|extern|enum|const|match_kind|package)\\b",
       "captures": {
         "1": {
           "name": "storage.type.p4"

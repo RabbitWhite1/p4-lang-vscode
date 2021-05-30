@@ -4,3 +4,4 @@ src/extension.ts
 out
 *.bak
 /test
+/vsix
