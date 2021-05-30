@@ -34,7 +34,9 @@ import {
 	ActionBindingContext,
 	ConditionalStatementContext,
 	DirectApplicationContext,
-	MainInstantiationContext
+	MainInstantiationContext,
+	RealTypeArgContext,
+	SimpleKeysetExpressionContext
 } from './grammar/P4Parser';
 import { P4Visitor } from './grammar/P4Visitor';
 import { AbstractParseTreeVisitor } from 'antlr4ts/tree/AbstractParseTreeVisitor';
@@ -174,6 +176,23 @@ class SemanticHighlightingVisitor extends AbstractParseTreeVisitor<ParsedToken[]
 		let parsedTokens: ParsedToken[] = [];
 		// parse `typeArg`
 		let typeRefToken = ctx.typeRef()?.typeName()?.prefixedType()?.type_or_id()?.IDENTIFIER()?.symbol;
+		console.log(ctx.typeRef()?.text)
+		typeRefToken && parsedTokens.push({
+			line: typeRefToken.line - 1, // vscode API starts from 0, while ANTLR4 starts from 1
+			startCharacter: typeRefToken.charPositionInLine,
+			length: typeRefToken.stopIndex - typeRefToken.startIndex + 1,
+			tokenType: "class",
+			tokenModifiers: ['declaration']
+		});
+		
+		return parsedTokens.concat(super.visitChildren(ctx));
+	}
+
+	visitRealTypeArg(ctx: RealTypeArgContext) {
+		let parsedTokens: ParsedToken[] = [];
+		// parse `typeArg`
+		let typeRefToken = ctx.typeRef()?.typeName()?.prefixedType()?.type_or_id()?.IDENTIFIER()?.symbol;
+		console.log(ctx.typeRef()?.text)
 		typeRefToken && parsedTokens.push({
 			line: typeRefToken.line - 1, // vscode API starts from 0, while ANTLR4 starts from 1
 			startCharacter: typeRefToken.charPositionInLine,
@@ -281,7 +300,7 @@ class SemanticHighlightingVisitor extends AbstractParseTreeVisitor<ParsedToken[]
 			tokenModifiers: []
 		});
 		
-		return parsedTokens;
+		return parsedTokens.concat(super.visitChildren(ctx));
 	}
 	
 	visitStateExpression(ctx: StateExpressionContext) {
@@ -435,6 +454,15 @@ class SemanticHighlightingVisitor extends AbstractParseTreeVisitor<ParsedToken[]
 			tokenType: "variable",
 			tokenModifiers: []
 		});
+		// parse `name`
+		nameToken = ctx?.name()?.nonTypeName()?.type_or_id()?.IDENTIFIER()?.symbol;
+		nameToken && parsedTokens.push({
+			line: nameToken.line - 1, // vscode API starts from 0, while ANTLR4 starts from 1
+			startCharacter: nameToken.charPositionInLine,
+			length: nameToken.stopIndex - nameToken.startIndex + 1,
+			tokenType: "variable",
+			tokenModifiers: []
+		});
 		return parsedTokens.concat(super.visitChildren(ctx));
 	}
 
@@ -581,10 +609,6 @@ class SemanticHighlightingVisitor extends AbstractParseTreeVisitor<ParsedToken[]
 			tokenModifiers: []
 		});
 		return parsedTokens.concat(super.visitChildren(ctx));
-	}
-
-	visitMethodCall(ctx: MethodCallContext) {
-		return super.visitChildren(ctx);
 	}
 	
 }
