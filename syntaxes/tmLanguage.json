@@ -230,6 +230,7 @@
             "storage.modifier.import.java",
             "storage.modifier.package.java",
             "storage.type",
+            "storage.type.annotation.java",
             "storage.type.cs",
             "storage.type.java",
             "string",

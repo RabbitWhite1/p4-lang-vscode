@@ -1,5 +1,6 @@
 # Change Log
 
+- 0.0.12: support `annotation`, `type`
 - 0.0.11: support `visitRealTypeArg`
 - 0.0.10: fix `numeric` again
 - 0.0.9: fix `numerics`

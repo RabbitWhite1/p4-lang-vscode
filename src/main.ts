@@ -36,7 +36,8 @@ import {
 	DirectApplicationContext,
 	MainInstantiationContext,
 	RealTypeArgContext,
-	SimpleKeysetExpressionContext
+	SimpleKeysetExpressionContext,
+	AnnotationContext
 } from './grammar/P4Parser';
 import { P4Visitor } from './grammar/P4Visitor';
 import { AbstractParseTreeVisitor } from 'antlr4ts/tree/AbstractParseTreeVisitor';
@@ -89,15 +90,40 @@ class SemanticHighlightingVisitor extends AbstractParseTreeVisitor<ParsedToken[]
 	}
 
 	visitTypedefDeclaration(ctx: TypedefDeclarationContext) {
-		let token = ctx.name()?.nonTypeName()?.type_or_id()?.IDENTIFIER()?.symbol;
-		if (token == null) return [];
-		return [{
-			line: token.line - 1, // vscode API starts from 0, while ANTLR4 starts from 1
-			startCharacter: token.charPositionInLine,
-			length: token.stopIndex - token.startIndex + 1,
+		let parsedTokens: ParsedToken[] = [];
+		// parse `name`
+		let nameToken = ctx.name()?.nonTypeName()?.type_or_id()?.IDENTIFIER()?.symbol;
+		nameToken && parsedTokens.push({
+			line: nameToken.line - 1, // vscode API starts from 0, while ANTLR4 starts from 1
+			startCharacter: nameToken.charPositionInLine,
+			length: nameToken.stopIndex - nameToken.startIndex + 1,
 			tokenType: "class",
 			tokenModifiers: ['declaration']
-		}];
+		});
+		
+		return parsedTokens.concat(super.visitChildren(ctx));
+	}
+
+	visitTypeRef(ctx: TypeRefContext) {
+		let parsedTokens: ParsedToken[] = [];
+		// parse `name`
+		let nameToken = ctx?.typeName()?.prefixedType()?.type_or_id()?.IDENTIFIER()?.symbol;
+		nameToken && parsedTokens.push({
+			line: nameToken.line - 1, // vscode API starts from 0, while ANTLR4 starts from 1
+			startCharacter: nameToken.charPositionInLine,
+			length: nameToken.stopIndex - nameToken.startIndex + 1,
+			tokenType: "class",
+			tokenModifiers: []
+		});
+		nameToken = ctx?.specializedType()?.typeName()?.prefixedType()?.type_or_id()?.IDENTIFIER()?.symbol;
+		nameToken && parsedTokens.push({
+			line: nameToken.line - 1, // vscode API starts from 0, while ANTLR4 starts from 1
+			startCharacter: nameToken.charPositionInLine,
+			length: nameToken.stopIndex - nameToken.startIndex + 1,
+			tokenType: "class",
+			tokenModifiers: []
+		});
+		return parsedTokens.concat(super.visitChildren(ctx));
 	}
 
 	visitStructField(ctx: StructFieldContext) {
@@ -121,7 +147,7 @@ class SemanticHighlightingVisitor extends AbstractParseTreeVisitor<ParsedToken[]
 			tokenModifiers: ['declaration']
 		});
 		
-		return parsedTokens;
+		return parsedTokens.concat(super.visitChildren(ctx));
 	}
 
 	visitParameter(ctx: ParameterContext) {

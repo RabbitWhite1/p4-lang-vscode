@@ -64,27 +64,34 @@
     },
     {
       "include": "#blockComments"
+    },
+    {
+      "include": "#annotations"
     }
   ],
   "repository": {
     "keywords": {
-      "patterns": [
-        {
-          "name": "keyword.control.p4",
-          "match": "(if|else|return|error|default|transition|select)"
+      "match": "\\b(if|else|return|error|default|transition|select)\\b",
+      "captures": {
+        "1": {
+          "name": "keyword.control.p4"
         }
-      ]
+      }
     },
     "builtin_types": {
-      "name": "storage.type.p4",
-      "match": "(inout|in|out|packet_in|packet_out|bool|void|extern|enum|const|match_kind|package)"
+      "match": "\\b(inout|in|out|packet_in|packet_out|bool|void|extern|enum|const|match_kind|package)\\b",
+      "captures": {
+        "1": {
+          "name": "storage.type.p4"
+        }
+      }
     },
     "buildin_variables": {
       "name": "storage.type.p4",
       "match": "\\b(true|false)\\b"
     },
     "numerics": {
-      "match": "\\W+(0x(\\d|[a-e])+|\\d+w\\d+|\\d+)\\W+",
+      "match": "\\b(0x(\\d|[a-e])+|\\d+w\\d+|\\d+)\\b",
       "captures": {
         "1": {
           "name": "constant.numeric.p4"
@@ -139,7 +146,7 @@
       }
     },
     "typedefs": {
-      "match": "(typedef)\\s+(.*)\\s+(.*)\\s*;",
+      "match": "(typedef|type)\\s+(.*)\\s+(.*)\\s*;",
       "captures": {
         "1": {
           "name": "keyword.control.p4"
@@ -148,6 +155,9 @@
           "patterns": [
             {
               "include": "#bits"
+            },
+            {
+              "include": "#typeNames"
             }
           ]
         },
@@ -155,6 +165,10 @@
           "name": "entity.name.type.other.p4"
         }
       }
+    },
+    "typeNames": {
+      "name": "entity.name.type.other.p4",
+      "match": "\\b[_\\w][\\w\\d_]*\\b"
     },
     "headers": {
       "name": "meta.header.p4",
@@ -302,6 +316,15 @@
           "match": "\\b[^\\*/]*|[^*]+/"
         }
       ]
+    },
+    "annotations": {
+      "name": "meta.type.annotation.P4",
+      "match": "@([_\\w][\\w\\d_]*)",
+      "captures": {
+        "1": {
+          "name": "storage.type.annotation.java"
+        }
+      }
     }
   },
   "scopeName": "source.p4"

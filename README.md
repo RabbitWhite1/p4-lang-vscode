@@ -1,8 +1,16 @@
-# p4-lang README
+# P4-lang README
 
 [![License: MIT](https://img.shields.io/badge/License-Apache-blue.svg)](https://github.com/RabbitWhite1/p4-lang-vscode/blob/master/LICENSE)
 
-This is a vscode extension for p4-lang. 
+This is a vscode extension for [P4](https://p4.org/) for **Programming Protocol-independent Packet Processors**.
+
+Most common **syntax and semantic highlights** are supported for now!
+
+## Features
+
+- simple syntax highlight
+- relative complete semantic highlight based on **ANTLR4**
+- 
 
 ## Develop This Extension
 
@@ -28,27 +36,19 @@ You can refer to this [official document](https://code.visualstudio.com/api/get-
 * `package.json` - this is the manifest file in which you declare your language support and define the location of the grammar file that has been copied into your extension.
 * `syntaxes/p4.tmLanguage.json` - this is the Text mate grammar file that is used for tokenization.
 * `language-configuration.json` - this is the language configuration, defining the tokens that are used for comments and brackets.
+* `src/main.ts` - contains all visitors for semantic highlight
+* `src/grammar/*` - contains all P4 language grammar specification (with a bit modification).
 
-### Install your extension
-
-* To start using your extension with Visual Studio Code copy it into the `<user home>/.vscode/extensions` folder and restart Code.
-* To share your extension with the world, read on https://code.visualstudio.com/docs about publishing an extension.
-
-## Known Issues
-
-- I am just a starter of vscode extension, looking forward to more people to join me.
+## Known Issues and TODO List
 
 ### Syntax
 
-- when visiting member, still need to judge whether it is a function or variable.
-- only deal with what I know for now, not according to the official language manual.
+- I only deal with some simple things in syntax, which means, without a semantic highlight, this extension might be a bit useless.
 
 ### Semantic
 
-- At lexer level, only a highlight for `#include`, I will plan to completely do this.
-- At parser level, only a visitor for highlighting `structField`
-- TODO: provide a `TypeDefinitionProvider`
-- TODO: `macro`s need better grammar definitions
+- **TODO**: provide a `TypeDefinitionProvider`
+- **TODO**: deal with `macro`s. For now I just skip all macro lines. But when it comes to `#ifdef`, `#else` sequences, something could go wrong.
 
 ## Thanks
 

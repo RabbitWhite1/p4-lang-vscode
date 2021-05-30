@@ -32,26 +32,29 @@ patterns:
   # comments
   - include: "#lineComments"
   - include: "#blockComments"
+  # annotation
+  - include: '#annotations'
 
 repository:
   # keywords and builtin
   keywords:
-    patterns:
-      - name: keyword.control.p4
-        match: (if|else|return|error|default|transition|select)
+    match: \b(if|else|return|error|default|transition|select)\b
+    captures: 
+      "1": { name: keyword.control.p4 }
   builtin_types:
-    name: storage.type.p4
-    match: (inout|in|out|packet_in|packet_out|bool|void|extern|enum|const|match_kind|package)
+    match: \b(inout|in|out|packet_in|packet_out|bool|void|extern|enum|const|match_kind|package)\b
+    captures: 
+      "1": { name: storage.type.p4 }
   buildin_variables:
     name: storage.type.p4
     match: \b(true|false)\b
   # numerics
   numerics:
-    match: \W+(0x(\d|[a-e])+|\d+w\d+|\d+)\W+
+    match: \b(0x(\d|[a-e])+|\d+w\d+|\d+)\b
     captures: 
       "1": { name: constant.numeric.p4 }
   bits:
-    match: "(bit)<([0-9]+)>"
+    match: (bit)<([0-9]+)>
     captures:
       "1": { name: storage.type.p4 }
       "2": { name: constant.numeric.p4 }
@@ -75,13 +78,17 @@ repository:
     captures:
       "1": { name: keyword.control.p4 }
   typedefs:
-    match: (typedef)\s+(.*)\s+(.*)\s*;
+    match: (typedef|type)\s+(.*)\s+(.*)\s*;
     captures: 
       "1": { name: keyword.control.p4 }
       "2":
         patterns:
           - include: "#bits"
+          - include: '#typeNames'
       "3": { name: entity.name.type.other.p4 }
+  typeNames:
+    name: entity.name.type.other.p4
+    match: \b[_\w][\w\d_]*\b
 
   # those with format "<type> <name>"
   headers:
@@ -161,4 +168,9 @@ repository:
       - name: comment.block.p4
         # match: "[a-z\t\b \n\r]*"
         match: \b[^\*/]*|[^*]+/
+  annotations:
+    name: meta.type.annotation.P4
+    match: '@([_\w][\w\d_]*)'
+    captures:
+      1: { name: storage.type.annotation.java }
 scopeName: source.p4
