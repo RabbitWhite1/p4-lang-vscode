@@ -21,12 +21,6 @@
       "include": "#buildin_variables"
     },
     {
-      "include": "#dec_numerics"
-    },
-    {
-      "include": "#bin_numerics"
-    },
-    {
       "include": "#numerics"
     },
     {
@@ -37,6 +31,15 @@
     },
     {
       "include": "#imports"
+    },
+    {
+      "include": "#ifdef"
+    },
+    {
+      "include": "#define"
+    },
+    {
+      "include": "#instructions"
     },
     {
       "include": "#typedefs"
@@ -80,46 +83,28 @@
     },
     "blockComments": {
       "name": "comment.block.p4",
-      "begin": "/*",
-      "end": "*/",
-      "match": "/\\*.*?\\*/"
+      "begin": "/\\*",
+      "end": "\\*/"
     },
     "keywords": {
-      "patterns": [
-        {
-          "name": "keyword.control.p4",
-          "match": "\\b(if|return|error|default|transition)\\b"
-        }
-      ]
+      "name": "keyword.control.p4",
+      "match": "\\b(if|else|return|error|default|transition)\\b"
     },
     "builtin_types": {
       "name": "storage.type.p4",
-      "match": "(inout|in|out|packet_in|packet_out|bool)"
+      "match": "\\b(inout|in|out|packet_in|packet_out|bool)\\b"
     },
     "buildin_variables": {
       "name": "support.variable.p4",
       "match": "\\b(true|false)\\b"
     },
-    "dec_numerics": {
-      "match": "\\W+(0x\\d+)",
-      "captures": {
-        "1": {
-          "name": "constant.numeric.p4"
-        }
-      }
-    },
-    "bin_numerics": {
-      "match": "\\W+(\\d+w\\d+)",
-      "captures": {
-        "1": {
-          "name": "constant.numeric.p4"
-        }
-      }
-    },
     "numerics": {
-      "match": "\\W+(\\d+)",
+      "match": "\\b((?:\\d+[sw])?)((?:(?:0[dD])?\\d+)|(?:0[xX][0-9a-fA-F]+)|(?:0[bB][01]+)|(?:0[oO][0-7]+))\\W",
       "captures": {
         "1": {
+          "name": "constant.numeric.p4"
+        },
+        "2": {
           "name": "constant.numeric.p4"
         }
       }
@@ -147,24 +132,44 @@
       ]
     },
     "imports": {
-      "match": "(#include)\\s*(<)(.*)(>)",
+      "match": "^[^\\S\\r\\n]*(#[^\\S\\r\\n]*include)\\s*(<(?:.*)>)[^\\S\\r\\n]*$",
       "captures": {
         "1": {
           "name": "keyword.control.p4"
         },
         "2": {
           "name": "string.quoted.double.p4"
-        },
-        "3": {
-          "name": "string.quoted.double.p4"
-        },
-        "4": {
-          "name": "string.quoted.double.p4"
         }
       }
     },
+    "ifdef": {
+			"match": "^[^\\S\\r\\n]*(#[^\\S\\r\\n]*(?:ifdef|ifndef))\\s+(\\S*)[^\\S\\r\\n]*$",
+      "captures": {
+        "1": {
+          "name": "keyword.control.import.p4"
+        },
+        "2": {
+          "name": "entity.name.function.preprocessor.p4"
+        }
+      }
+    },
+    "define": {
+      "match": "^[^\\S\\r\\n]*(#[^\\S\\r\\n]*(?:define))\\s+(\\S*)[^\\S\\r\\n]*",
+      "captures": {
+        "1": {
+          "name": "keyword.control.import.p4"
+        },
+        "2": {
+          "name": "entity.name.function.preprocessor.p4"
+        }
+      }
+    },
+    "instructions": {
+      "name": "keyword.control.import.p4",
+			"match": "^[^\\S\\r\\n]*#[^\\S\\r\\n]*(?:include|else|endif|ifdef|ifndef|elif|undef|if|define)"
+    },
     "typedefs": {
-      "match": "(typedef)\\s+(.*)\\s+(.*)\\s*;",
+      "match": "\\b(typedef)\\s+(.*)\\s+(.*)\\s*;",
       "captures": {
         "1": {
           "name": "keyword.control.p4"
@@ -183,7 +188,7 @@
     },
     "headers": {
       "name": "meta.header.p4",
-      "match": "\\s*(header)\\s+([_\\w][\\w\\d_]*)\\s*",
+      "match": "\\b(header)\\s+([_\\w][\\w\\d_]*)\\s*",
       "captures": {
         "1": {
           "name": "storage.type.header.p4"
@@ -195,7 +200,7 @@
     },
     "structs": {
       "name": "meta.struct.p4",
-      "match": "\\s*(struct)\\s+([_\\w][\\w\\d_]*)\\s*",
+      "match": "\\b(struct)\\s+([_\\w][\\w\\d_]*)\\s*",
       "captures": {
         "1": {
           "name": "storage.type.struct.p4"
@@ -207,7 +212,7 @@
     },
     "controls": {
       "name": "meta.control.p4",
-      "match": "\\s*(control)\\s+([_\\w][\\w\\d_]*)\\s*",
+      "match": "\\b(control)\\s+([_\\w][\\w\\d_]*)\\s*",
       "captures": {
         "1": {
           "name": "storage.type.control.p4"
@@ -219,7 +224,7 @@
     },
     "parsers": {
       "name": "meta.parser.p4",
-      "match": "\\s*(parser)\\s+([_\\w][\\w\\d_]*)\\s*",
+      "match": "\\b(parser)\\s+([_\\w][\\w\\d_]*)\\s*",
       "captures": {
         "1": {
           "name": "storage.type.parser.p4"
@@ -231,7 +236,7 @@
     },
     "states": {
       "name": "meta.state.p4",
-      "match": "\\s*(state)\\s+([_\\w][\\w\\d_]*)\\s*",
+      "match": "\\b(state)\\s+([_\\w][\\w\\d_]*)\\s*",
       "captures": {
         "1": {
           "name": "storage.type.state.p4"
@@ -243,7 +248,7 @@
     },
     "actions": {
       "name": "meta.state.p4",
-      "match": "\\s*(action)\\s+([_\\w][\\w\\d_]*)\\s*",
+      "match": "\\b(action)\\s+([_\\w][\\w\\d_]*)\\s*",
       "captures": {
         "1": {
           "name": "storage.type.function.p4"
@@ -255,7 +260,7 @@
     },
     "tables": {
       "name": "meta.table.p4",
-      "match": "\\s*(table)\\s+([_\\w][\\w\\d_]*)\\s*",
+      "match": "\\b(table)\\s+([_\\w][\\w\\d_]*)\\s*",
       "captures": {
         "1": {
           "name": "storage.type.table.p4"
@@ -266,7 +271,7 @@
       }
     },
     "applys": {
-      "match": "\\s*(apply)\\s*\\{",
+      "match": "\\b(apply)\\s*\\{",
       "captures": {
         "1": {
           "name": "keyword.control.p4"
@@ -282,7 +287,7 @@
       }
     },
     "function_calls": {
-      "match": "(?:\\s*|\\.)([_\\w][\\w\\d_]*)\\s*\\(",
+      "match": "\\b(?:\\.)?([_\\w][\\w\\d_]*)\\s*\\(",
       "captures": {
         "1": {
           "name": "entity.name.function.p4"
