@@ -24,9 +24,6 @@
       "include": "#strings"
     },
     {
-      "include": "#macros"
-    },
-    {
       "include": "#imports"
     },
     {
@@ -34,6 +31,9 @@
     },
     {
       "include": "#define"
+    },
+    {
+      "include": "#macros"
     },
     {
       "include": "#typedefs"
