@@ -2,57 +2,67 @@
     "name": "p4-lang",
     "displayName": "p4-lang",
     "description": "p4 language support in vscode",
-    "version": "0.0.1",
+    "version": "0.0.14",
     "repository": "https://github.com/RabbitWhite1/p4-lang-vscode",
-	"publisher": "ZhanghanWang",
+    "publisher": "ZhanghanWang",
     "engines": {
-        "vscode": "^1.55.0"
+        "vscode": "^1.42.0"
     },
+    "icon": "images/p4-128x128.png",
     "categories": [
         "Programming Languages"
     ],
-	"activationEvents": [
-		"onLanguage:p4"
-	],
-	"main": "./out/extension.js",
+    "activationEvents": [
+        "onLanguage:p4"
+    ],
+    "main": "./out/main.js",
     "contributes": {
-        "languages": [{
-            "id": "p4",
-            "aliases": ["p4", "p4"],
-            "extensions": [".p4"]
-        }],
+        "languages": [
+            {
+                "id": "p4",
+                "aliases": [
+                    "p4",
+                    "p4"
+                ],
+                "extensions": [
+                    ".p4"
+                ],
+                "configuration": "./language-configuration.json"
+            }
+        ],
         "grammars": [
             {
                 "language": "p4",
                 "scopeName": "source.p4",
                 "path": "./syntaxes/p4.tmLanguage.json"
             }
-        ],
-        "semanticTokenTypes": [
-            {
-                "id": "header",
-                "superType": "type",
-                "description": "`header` in p4-lang"
-            },
-            {
-                "id": "table",
-                "superType": "type",
-                "description": "`table` in p4-lang"
-            }
         ]
     },
+    "configurationDefaults": {
+        "p4": {
+            "editor.semanticHighlighting.enabled": true
+        }
+    },
     "scripts": {
-		"vscode:prepublish": "npm run compile",
-		"compile": "tsc -p ./",
-		"lint": "eslint . --ext .ts,.tsx",
-		"watch": "tsc -watch -p ./"
-	},
+        "vscode:prepublish": "npm run compile",
+        "convert_yaml": "npx js-yaml syntaxes/p4.tmLanguage.yaml > syntaxes/p4.tmLanguage.json",
+        "compile": "tsc -p ./",
+        "lint": "eslint . --ext .ts,.tsx",
+        "watch": "tsc -watch -p ./",
+        "antlr4ts": "antlr4ts -visitor ./src/grammar/P4.g4"
+    },
     "devDependencies": {
-		"@types/node": "^12.12.0",
-		"@types/vscode": "^1.42.0",
-		"@typescript-eslint/eslint-plugin": "^4.16.0",
-		"@typescript-eslint/parser": "^4.16.0",
-		"eslint": "^7.21.0",
-		"typescript": "^4.2.2"
-	}
+        "@types/node": "^12.12.0",
+        "@types/vscode": "^1.42.0",
+        "@typescript-eslint/eslint-plugin": "^4.16.0",
+        "@typescript-eslint/parser": "^4.16.0",
+        "eslint": "^7.21.0",
+        "typescript": "^4.2.2",
+        "antlr4": "^4.9.2",
+        "antlr4ts": "^0.5.0-alpha.4",
+        "antlr4ts-cli": "^0.5.0-alpha.4"
+    },
+    "dependencies": {
+        "antlr4ts": "^0.5.0-alpha.4"
+    }
 }

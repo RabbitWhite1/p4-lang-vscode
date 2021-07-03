@@ -1,130 +1,265 @@
+
+/*
+ * P4 Calculator
+ *
+ * This program implements a simple protocol. It can be carried over Ethernet
+ * (Ethertype 0x1234).
+ *
+ * The Protocol header looks like this:
+ *
+ *        0                1                  2              3
+ * +----------------+----------------+----------------+---------------+
+ * |      P         |       4        |     Version    |     Op        |
+ * +----------------+----------------+----------------+---------------+
+ * |                              Operand A                           |
+ * +----------------+----------------+----------------+---------------+
+ * |                              Operand B                           |
+ * +----------------+----------------+----------------+---------------+
+ * |                              Result                              |
+ * +----------------+----------------+----------------+---------------+
+ *
+ * P is an ASCII Letter 'P' (0x50)
+ * 4 is an ASCII Letter '4' (0x34)
+ * Version is currently 0.1 (0x01)
+ * Op is an operation to Perform:
+ *   '+' (0x2b) Result = OperandA + OperandB
+ *   '-' (0x2d) Result = OperandA - OperandB
+ *   '&' (0x26) Result = OperandA & OperandB
+ *   '|' (0x7c) Result = OperandA | OperandB
+ *   '^' (0x5e) Result = OperandA ^ OperandB
+ *
+ * The device receives a packet, performs the requested operation, fills in the 
+ * result and sends the packet back out of the same port it came in on, while 
+ * swapping the source and destination addresses.
+ *
+ * If an unknown operation is specified or the header is not valid, the packet
+ * is dropped 
+ */
+
 #include <core.p4>
 #include <v1model.p4>
 
-typedef bit<48> EthernetAddress;
-typedef bit<32> IPv4Address;
+/*
+ * Define the headers the program will recognize
+ */
 
+/*
+ * Standard Ethernet header 
+ */
 header ethernet_t {
-    EthernetAddress dst_addr;
-    EthernetAddress src_addr;
-    bit<16>         ether_type;
+    bit<48> dstAddr;
+    bit<48> srcAddr;
+    bit<16> etherType;
 }
 
-header ipv4_t {
-    bit<4>      version;
-    bit<4>      ihl;
-    bit<8>      diffserv;
-    bit<16>     total_len;
-    bit<16>     identification;
-    bit<3>      flags;
-    bit<13>     frag_offset;
-    bit<8>      ttl;
-    bit<8>      protocol;
-    bit<16>     hdr_checksum;
-    IPv4Address src_addr;
-    IPv4Address dst_addr;
+/*
+ * This is a custom protocol header for the calculator. We'll use 
+ * etherType 0x1234 for it (see parser)
+ */
+const bit<16> P4CALC_ETYPE = 0x1234;
+const bit<8>  P4CALC_P     = 0x50;   // 'P'
+const bit<8>  P4CALC_4     = 0x34;   // '4'
+const bit<8>  P4CALC_VER   = 0x01;   // v0.1
+const bit<8>  P4CALC_PLUS  = 0x2b;   // '+'
+const bit<8>  P4CALC_MINUS = 0x2d;   // '-'
+const bit<8>  P4CALC_AND   = 0x26;   // '&'
+const bit<8>  P4CALC_OR    = 0x7c;   // '|'
+const bit<8>  P4CALC_CARET = 0x5e;   // '^'
+
+header p4calc_t {
+/* TODO
+ * fill p4calc_t header with P, four, ver, op, operand_a, operand_b, and res
+   entries based on above protocol header definition.
+ */
+    bit<8>  p;
+    bit<8>  four;
+    bit<8>  ver;
+    bit<8>  op;
+    bit<32> operand_a;
+    bit<32> operand_b;
+    bit<32> res;
 }
 
-struct headers_t {
-    ethernet_t ethernet;
-    ipv4_t     ipv4;
+/*
+ * All headers, used in the program needs to be assembled into a single struct.
+ * We only need to declare the type, but there is no need to instantiate it,
+ * because it is done "by the architecture", i.e. outside of P4 functions
+ */
+struct headers {
+    ethernet_t   ethernet;
+    p4calc_t     p4calc;
 }
 
-struct metadata_t {
+/*
+ * All metadata, globally used in the program, also  needs to be assembled 
+ * into a single struct. As in the case of the headers, we only need to 
+ * declare the type, but there is no need to instantiate it,
+ * because it is done "by the architecture", i.e. outside of P4 functions
+ */
+ 
+struct metadata {
+    /* In our case it is empty */
 }
 
-error {
-    IPv4IncorrectVersion,
-    IPv4OptionsNotSupported //gggg 
-    /* ggg ***/
-}
-
-parser my_parser(packet_in packet,
-                out headers_t hd,
-                inout metadata_t meta,
-                inout standard_metadata_t standard_meta)
-{
+/*************************************************************************
+ ***********************  P A R S E R  ***********************************
+ *************************************************************************/
+parser MyParser(packet_in packet,
+                out headers hdr,
+                inout metadata meta,
+                inout standard_metadata_t standard_metadata) {    
     state start {
-        packet.extract(hd.ethernet);
-        transition select(hd.ethernet.ether_type) {
-            0x0800:  parse_ipv4;
-            default: accept;
+        packet.extract(hdr.ethernet);
+        transition select(hdr.ethernet.etherType) {
+            P4CALC_ETYPE : check_p4calc;
+            default      : accept;
         }
     }
-
-    state parse_ipv4 {
-        packet.extract(hd.ipv4);
-        verify(hd.ipv4.version == 4w4, error.IPv4IncorrectVersion);
-        verify(hd.ipv4.ihl == 4w5, error.IPv4OptionsNotSupported);
+    
+    state check_p4calc {
+        transition select(packet.lookahead<p4calc_t>().p,
+        packet.lookahead<p4calc_t>().four,
+        packet.lookahead<p4calc_t>().ver) {
+            (P4CALC_P, P4CALC_4, P4CALC_VER) : parse_p4calc;
+            default                          : accept;
+        }
+    }
+    
+    state parse_p4calc {
+        packet.extract(hdr.p4calc);
         transition accept;
-    }    
-}
-
-control my_deparser(packet_out packet,
-                   in headers_t hdr)
-{
-    apply {
-        packet.emit(hdr.ethernet);
-        packet.emit(hdr.ipv4);
     }
 }
 
-control my_verify_checksum(inout headers_t hdr,
-                         inout metadata_t meta)
-{
+/*************************************************************************
+ ************   C H E C K S U M    V E R I F I C A T I O N   *************
+ *************************************************************************/
+control MyVerifyChecksum(inout headers hdr,
+                         inout metadata meta) {
     apply { }
 }
 
-control my_compute_checksum(inout headers_t hdr,
-                          inout metadata_t meta)
-{
-    apply { }
-}
+/*************************************************************************
+ **************  I N G R E S S   P R O C E S S I N G   *******************
+ *************************************************************************/
+control MyIngress(inout headers hdr,
+                  inout metadata meta,
+                  inout standard_metadata_t standard_metadata) {
+    action send_back(bit<32> result) {
+        /* TODO
+         * - put the result back in hdr.p4calc.res
+         * - swap MAC addresses in hdr.ethernet.dstAddr and
+         *   hdr.ethernet.srcAddr using a temp variable
+         * - Send the packet back to the port it came from
+             by saving standard_metadata.ingress_port into
+             standard_metadata.egress_spec
+         */
+        hdr.p4calc.res = result;
+        bit<48> tmp;
+        tmp = hdr.ethernet.dstAddr;
+        hdr.ethernet.dstAddr = hdr.ethernet.srcAddr;
+        hdr.ethernet.srcAddr = tmp;
+        standard_metadata.egress_spec = standard_metadata.ingress_port;
+        standard_metadata.egress_port = standard_metadata.ingress_port;
+    }
+    
+    action operation_add() {
+        /* TODO call send_back with operand_a + operand_b */
+        send_back(hdr.p4calc.operand_a + hdr.p4calc.operand_b);
+    }
+    
+    action operation_sub() {
+        /* TODO call send_back with operand_a - operand_b */
+        send_back(hdr.p4calc.operand_a - hdr.p4calc.operand_b);
+    }
+    
+    action operation_and() {
+        /* TODO call send_back with operand_a & operand_b */
+        send_back(hdr.p4calc.operand_a & hdr.p4calc.operand_b);
+    }
+    
+    action operation_or() {
+        /* TODO call send_back with operand_a | operand_b */
+        send_back(hdr.p4calc.operand_a | hdr.p4calc.operand_b);
+    }
 
-control my_ingress(inout headers_t hdr,
-                  inout metadata_t meta,
-                  inout standard_metadata_t standard_metadata)
-{
-    bool dropped = false;
+    action operation_xor() {
+        /* TODO call send_back with operand_a ^ operand_b */
+        send_back(hdr.p4calc.operand_a ^ hdr.p4calc.operand_b);
+    }
 
-    action drop_action() {
+    action operation_drop() {
         mark_to_drop(standard_metadata);
-        dropped = true;
     }
-
-    action to_port_action(bit<9> port) {
-        hdr.ipv4.ttl = hdr.ipv4.ttl - 1;
-        standard_metadata.egress_spec = port;
-    }
-
-    table ipv4_match {
+    
+    table calculate {
         key = {
-            hdr.ipv4.dst_addr: lpm;
+            hdr.p4calc.op        : exact;
         }
         actions = {
-            drop_action;
-            to_port_action;
+            operation_add;
+            operation_sub;
+            operation_and;
+            operation_or;
+            operation_xor;
+            operation_drop;
         }
-        size = 1024;
-        default_action = drop_action;
+        const default_action = operation_drop();
+        const entries = {
+            P4CALC_PLUS : operation_add();
+            P4CALC_MINUS: operation_sub();
+            P4CALC_AND  : operation_and();
+            P4CALC_OR   : operation_or();
+            P4CALC_CARET: operation_xor();
+        }
     }
-
+            
     apply {
-        ipv4_match.apply();
-        if (dropped) return;
+        if (hdr.p4calc.isValid()) {
+            calculate.apply();
+        } 
+        else {
+            operation_drop();
+        }
     }
 }
 
-control my_egress(inout headers_t hdr,
-                 inout metadata_t meta,
-                 inout standard_metadata_t standard_metadata)
-{
+/*************************************************************************
+ ****************  E G R E S S   P R O C E S S I N G   *******************
+ *************************************************************************/
+control MyEgress(inout headers hdr,
+                 inout metadata meta,
+                 inout standard_metadata_t standard_metadata) {
     apply { }
 }
 
-V1Switch(my_parser(),
-         my_verify_checksum(),
-         my_ingress(),
-         my_egress(),
-         my_compute_checksum(),
-         my_deparser()) main;
+/*************************************************************************
+ *************   C H E C K S U M    C O M P U T A T I O N   **************
+ *************************************************************************/
+
+control MyComputeChecksum(inout headers hdr, inout metadata meta) {
+    apply { }
+}
+
+/*************************************************************************
+ ***********************  D E P A R S E R  *******************************
+ *************************************************************************/
+control MyDeparser(packet_out packet, in headers hdr) {
+    apply {
+        packet.emit(hdr.ethernet);
+        packet.emit(hdr.p4calc);
+    }
+}
+
+/*************************************************************************
+ ***********************  S W I T T C H **********************************
+ *************************************************************************/
+
+V1Switch(
+    MyParser(),
+    MyVerifyChecksum(),
+    MyIngress(),
+    MyEgress(),
+    MyComputeChecksum(),
+    MyDeparser()
+    ) main;
