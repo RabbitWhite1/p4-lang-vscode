@@ -36,7 +36,18 @@
                 "scopeName": "source.p4",
                 "path": "./syntaxes/p4.tmLanguage.json"
             }
-        ]
+        ],
+        "configuration": {
+            "title": "VSCode P4 Language Configuration",
+            "type": "object",
+            "properties": {
+                "p4.suggest.basic": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Control if the extension P4 language suggestions are enabled."
+                }
+            }
+        }
     },
     "configurationDefaults": {
         "p4": {

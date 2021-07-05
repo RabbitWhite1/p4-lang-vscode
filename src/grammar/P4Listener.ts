@@ -129,6 +129,17 @@ import { LvalueContext } from "./P4Parser";
 import { ExpressionContext } from "./P4Parser";
 import { Type_or_idContext } from "./P4Parser";
 import { ParserStateConditionContext } from "./P4Parser";
+import { PpDefineNameContext } from "./P4Parser";
+import { Preproc_includeContext } from "./P4Parser";
+import { Preproc_defineContext } from "./P4Parser";
+import { Preproc_undefContext } from "./P4Parser";
+import { Preproc_ifdefContext } from "./P4Parser";
+import { Preproc_ifndefContext } from "./P4Parser";
+import { Preproc_elseifContext } from "./P4Parser";
+import { Preproc_endifContext } from "./P4Parser";
+import { Preproc_lineContext } from "./P4Parser";
+import { Preproc_ifContext } from "./P4Parser";
+import { Preproc_elseContext } from "./P4Parser";
 
 
 /**
@@ -1521,5 +1532,126 @@ export interface P4Listener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	exitParserStateCondition?: (ctx: ParserStateConditionContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `P4Parser.ppDefineName`.
+	 * @param ctx the parse tree
+	 */
+	enterPpDefineName?: (ctx: PpDefineNameContext) => void;
+	/**
+	 * Exit a parse tree produced by `P4Parser.ppDefineName`.
+	 * @param ctx the parse tree
+	 */
+	exitPpDefineName?: (ctx: PpDefineNameContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `P4Parser.preproc_include`.
+	 * @param ctx the parse tree
+	 */
+	enterPreproc_include?: (ctx: Preproc_includeContext) => void;
+	/**
+	 * Exit a parse tree produced by `P4Parser.preproc_include`.
+	 * @param ctx the parse tree
+	 */
+	exitPreproc_include?: (ctx: Preproc_includeContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `P4Parser.preproc_define`.
+	 * @param ctx the parse tree
+	 */
+	enterPreproc_define?: (ctx: Preproc_defineContext) => void;
+	/**
+	 * Exit a parse tree produced by `P4Parser.preproc_define`.
+	 * @param ctx the parse tree
+	 */
+	exitPreproc_define?: (ctx: Preproc_defineContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `P4Parser.preproc_undef`.
+	 * @param ctx the parse tree
+	 */
+	enterPreproc_undef?: (ctx: Preproc_undefContext) => void;
+	/**
+	 * Exit a parse tree produced by `P4Parser.preproc_undef`.
+	 * @param ctx the parse tree
+	 */
+	exitPreproc_undef?: (ctx: Preproc_undefContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `P4Parser.preproc_ifdef`.
+	 * @param ctx the parse tree
+	 */
+	enterPreproc_ifdef?: (ctx: Preproc_ifdefContext) => void;
+	/**
+	 * Exit a parse tree produced by `P4Parser.preproc_ifdef`.
+	 * @param ctx the parse tree
+	 */
+	exitPreproc_ifdef?: (ctx: Preproc_ifdefContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `P4Parser.preproc_ifndef`.
+	 * @param ctx the parse tree
+	 */
+	enterPreproc_ifndef?: (ctx: Preproc_ifndefContext) => void;
+	/**
+	 * Exit a parse tree produced by `P4Parser.preproc_ifndef`.
+	 * @param ctx the parse tree
+	 */
+	exitPreproc_ifndef?: (ctx: Preproc_ifndefContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `P4Parser.preproc_elseif`.
+	 * @param ctx the parse tree
+	 */
+	enterPreproc_elseif?: (ctx: Preproc_elseifContext) => void;
+	/**
+	 * Exit a parse tree produced by `P4Parser.preproc_elseif`.
+	 * @param ctx the parse tree
+	 */
+	exitPreproc_elseif?: (ctx: Preproc_elseifContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `P4Parser.preproc_endif`.
+	 * @param ctx the parse tree
+	 */
+	enterPreproc_endif?: (ctx: Preproc_endifContext) => void;
+	/**
+	 * Exit a parse tree produced by `P4Parser.preproc_endif`.
+	 * @param ctx the parse tree
+	 */
+	exitPreproc_endif?: (ctx: Preproc_endifContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `P4Parser.preproc_line`.
+	 * @param ctx the parse tree
+	 */
+	enterPreproc_line?: (ctx: Preproc_lineContext) => void;
+	/**
+	 * Exit a parse tree produced by `P4Parser.preproc_line`.
+	 * @param ctx the parse tree
+	 */
+	exitPreproc_line?: (ctx: Preproc_lineContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `P4Parser.preproc_if`.
+	 * @param ctx the parse tree
+	 */
+	enterPreproc_if?: (ctx: Preproc_ifContext) => void;
+	/**
+	 * Exit a parse tree produced by `P4Parser.preproc_if`.
+	 * @param ctx the parse tree
+	 */
+	exitPreproc_if?: (ctx: Preproc_ifContext) => void;
+
+	/**
+	 * Enter a parse tree produced by `P4Parser.preproc_else`.
+	 * @param ctx the parse tree
+	 */
+	enterPreproc_else?: (ctx: Preproc_elseContext) => void;
+	/**
+	 * Exit a parse tree produced by `P4Parser.preproc_else`.
+	 * @param ctx the parse tree
+	 */
+	exitPreproc_else?: (ctx: Preproc_elseContext) => void;
 }
 

@@ -6,7 +6,7 @@ program : input;
 
 input :  /* epsilon */
 	| input declaration 
-	| input ';'
+	| declaration
 	;
 
 declaration
@@ -20,24 +20,21 @@ declaration
     | errorDeclaration
     | matchKindDeclaration
     | functionDeclaration
+    | ';'
 	| preprocessorLine
     ;
 
 preprocessorLine
-	: PREPROC_INCLUDE ppIncludeFileName
-	| PREPROC_DEFINE type_or_id expression
-	| PREPROC_DEFINE type_or_id
-	| PREPROC_DEFINE
-	| PREPROC_UNDEF
-	| PREPROC_LINE
-	| PREPROC_IFDEF type_or_id
-    | PREPROC_IFDEF
-	| PREPROC_IFNDEF type_or_id
-	| PREPROC_IFNDEF
-	| PREPROC_IF expression
-	| PREPROC_ELSEIF expression
-	| PREPROC_ELSE
-	| PREPROC_ENDIF
+	: preproc_include
+	| preproc_define
+	| preproc_undef
+	| preproc_line
+    | preproc_ifdef
+	| preproc_ifndef
+	| preproc_if
+	| preproc_elseif
+	| preproc_else
+	| preproc_endif
     ;
 
 ppIncludeFileName 
@@ -840,6 +837,21 @@ parserStateCondition
 	| '(' keysetExpression ')' '==' expression
 	;
 
+ppDefineName                : IDENTIFIER
+                            | IDENTIFIER '(' (IDENTIFIER ( ',' IDENTIFIER )*)? ')' expression;
+
+preproc_include				: PREPROC_INCLUDE ppIncludeFileName;
+preproc_define				: PREPROC_DEFINE ppDefineName expression
+                            | PREPROC_DEFINE IDENTIFIER;
+preproc_undef				: PREPROC_UNDEF IDENTIFIER;
+preproc_ifdef				: PREPROC_IFDEF IDENTIFIER;
+preproc_ifndef				: PREPROC_IFNDEF IDENTIFIER;
+preproc_elseif				: PREPROC_ELSEIF expression;
+preproc_endif				: PREPROC_ENDIF;
+preproc_line				: PREPROC_LINE .*?;
+preproc_if					: PREPROC_IF expression;
+preproc_else				: PREPROC_ELSE;
+
 /* ******* */
 /*  LEXER  */
 /* ******* */
@@ -933,32 +945,23 @@ AT							: '@';
 UNEXPECTED_TOKEN			: '<*>.|\n';
 
 // added by Ali
-WS 							: [ \t\r\n]+ -> channel(HIDDEN) ;
+WS 							: [ \t\r\n]+ -> skip ;
 COMMENT 					: '/*' .*? '*/' -> skip;
 LINE_COMMENT 				: '//' ~[\r\n]* -> skip;
 fragment ESCAPED_QUOTE 		: '\\"';
 STRING_LITERAL 				: '"' ( ESCAPED_QUOTE | ~('\n'|'\r') )*? '"';
+NEW_LINE                    : [\r\n]+;
 
-PREPROC_INCLUDE				: '#include' .*? [\r\n]+ -> skip;
-PREPROC_DEFINE				: '#define' .*? [\r\n]+ -> skip;
-PREPROC_UNDEF				: '#undef' .*? [\r\n]+ -> skip;
-PREPROC_IFDEF				: '#ifdef' .*? [\r\n]+ -> skip;
-PREPROC_IFNDEF				: '#ifndef' .*? [\r\n]+ -> skip;
-PREPROC_ELSEIF				: '#elseif' .*? [\r\n]+ -> skip;
-PREPROC_ENDIF				: '#endif' .*? [\r\n]+ -> skip;
-PREPROC_LINE				: '#line' .*? [\r\n]+ -> skip;
-PREPROC_IF					: '#if' .*? [\r\n]+ -> skip;
-PREPROC_ELSE				: '#else' .*? [\r\n]+ -> skip;
-// PREPROC_INCLUDE				: '#include';
-// PREPROC_DEFINE				: '#define';
-// PREPROC_UNDEF				: '#undef' ;
-// PREPROC_IFDEF				: '#ifdef' ;
-// PREPROC_IFNDEF				: '#ifndef';
-// PREPROC_ELSEIF				: '#elseif';
-// PREPROC_ENDIF				: '#endif' ;
-// PREPROC_LINE				: '#line' ;
-// PREPROC_IF					: '#if' ;
-// PREPROC_ELSE				: '#else' ;
+PREPROC_INCLUDE				: '#'[ \t]*'include';
+PREPROC_DEFINE				: '#'[ \t]*'define';
+PREPROC_UNDEF				: '#'[ \t]*'undef' ;
+PREPROC_IFDEF				: '#'[ \t]*'ifdef' ;
+PREPROC_IFNDEF				: '#'[ \t]*'ifndef';
+PREPROC_ELSEIF				: '#'[ \t]*'elseif';
+PREPROC_ENDIF				: '#'[ \t]*'endif' ;
+PREPROC_LINE				: '#'[ \t]*'line' ;
+PREPROC_IF					: '#'[ \t]*'if' ;
+PREPROC_ELSE				: '#'[ \t]*'else' ;
 PREPROC_ARG 				: '##'[A-Za-z_][A-Za-z0-9_]* -> channel(HIDDEN) ;
 
 // end of added by Ali

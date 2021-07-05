@@ -129,6 +129,17 @@ import { LvalueContext } from "./P4Parser";
 import { ExpressionContext } from "./P4Parser";
 import { Type_or_idContext } from "./P4Parser";
 import { ParserStateConditionContext } from "./P4Parser";
+import { PpDefineNameContext } from "./P4Parser";
+import { Preproc_includeContext } from "./P4Parser";
+import { Preproc_defineContext } from "./P4Parser";
+import { Preproc_undefContext } from "./P4Parser";
+import { Preproc_ifdefContext } from "./P4Parser";
+import { Preproc_ifndefContext } from "./P4Parser";
+import { Preproc_elseifContext } from "./P4Parser";
+import { Preproc_endifContext } from "./P4Parser";
+import { Preproc_lineContext } from "./P4Parser";
+import { Preproc_ifContext } from "./P4Parser";
+import { Preproc_elseContext } from "./P4Parser";
 
 
 /**
@@ -1020,5 +1031,82 @@ export interface P4Visitor<Result> extends ParseTreeVisitor<Result> {
 	 * @return the visitor result
 	 */
 	visitParserStateCondition?: (ctx: ParserStateConditionContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `P4Parser.ppDefineName`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitPpDefineName?: (ctx: PpDefineNameContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `P4Parser.preproc_include`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitPreproc_include?: (ctx: Preproc_includeContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `P4Parser.preproc_define`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitPreproc_define?: (ctx: Preproc_defineContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `P4Parser.preproc_undef`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitPreproc_undef?: (ctx: Preproc_undefContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `P4Parser.preproc_ifdef`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitPreproc_ifdef?: (ctx: Preproc_ifdefContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `P4Parser.preproc_ifndef`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitPreproc_ifndef?: (ctx: Preproc_ifndefContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `P4Parser.preproc_elseif`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitPreproc_elseif?: (ctx: Preproc_elseifContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `P4Parser.preproc_endif`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitPreproc_endif?: (ctx: Preproc_endifContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `P4Parser.preproc_line`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitPreproc_line?: (ctx: Preproc_lineContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `P4Parser.preproc_if`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitPreproc_if?: (ctx: Preproc_ifContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by `P4Parser.preproc_else`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitPreproc_else?: (ctx: Preproc_elseContext) => Result;
 }
 

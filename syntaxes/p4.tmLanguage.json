@@ -18,6 +18,9 @@
       "include": "#numerics"
     },
     {
+      "include": "#wrong_numerics"
+    },
+    {
       "include": "#bits"
     },
     {
@@ -98,6 +101,10 @@
           "name": "constant.numeric.p4"
         }
       }
+    },
+    "wrong_numerics": {
+      "name": "invalid.illegal.constant.numeric.p4",
+      "match": "\\b[0-9]+[a-zA-Z_][a-zA-Z0-9_]*\\b"
     },
     "bits": {
       "match": "(bit)<([0-9]+)>",

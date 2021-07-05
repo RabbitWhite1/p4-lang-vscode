@@ -16,6 +16,10 @@ module.exports = {
 		'@typescript-eslint/no-explicit-any': 0,
 		'@typescript-eslint/explicit-module-boundary-types': 0,
 		'@typescript-eslint/no-non-null-assertion': 0,
-		"no-constant-condition": 0
+		"no-constant-condition": 0,
+		"no-useless-escape": 0,
+		"prefer-const": 0,
+		"no-empty": 0,
+		"@typescript-eslint/no-inferrable-types": 0
 	}
 };
