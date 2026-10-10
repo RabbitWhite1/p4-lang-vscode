@@ -1,12 +1,12 @@
 {
     "name": "p4-lang",
     "displayName": "p4-lang",
-    "description": "p4 language support in vscode",
+    "description": "P4_16 language support with a Tree-sitter language server",
     "version": "0.0.14",
     "repository": "https://github.com/RabbitWhite1/p4-lang-vscode",
     "publisher": "ZhanghanWang",
     "engines": {
-        "vscode": "^1.42.0"
+        "vscode": "^1.96.0"
     },
     "icon": "images/p4-128x128.png",
     "categories": [
@@ -15,7 +15,7 @@
     "activationEvents": [
         "onLanguage:p4"
     ],
-    "main": "./out/main.js",
+    "main": "./dist/main.js",
     "contributes": {
         "languages": [
             {
@@ -36,33 +36,79 @@
                 "scopeName": "source.p4",
                 "path": "./syntaxes/p4.tmLanguage.json"
             }
-        ]
-    },
-    "configurationDefaults": {
-        "p4": {
-            "editor.semanticHighlighting.enabled": true
+        ],
+        "configurationDefaults": {
+            "[p4]": {
+                "editor.semanticHighlighting.enabled": true
+            }
+        },
+        "configuration": {
+            "title": "P4",
+            "properties": {
+                "p4.includePaths": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "default": [],
+                    "scope": "resource",
+                    "description": "Include directories, relative to the workspace folder or absolute."
+                },
+                "p4.defines": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    },
+                    "default": {},
+                    "scope": "resource",
+                    "description": "Preprocessor definitions used to select active conditional branches."
+                },
+                "p4.maxNumberOfProblems": {
+                    "type": "number",
+                    "default": 100,
+                    "minimum": 0,
+                    "description": "Maximum diagnostics per document."
+                },
+                "p4.trace.server": {
+                    "type": "string",
+                    "enum": [
+                        "off",
+                        "messages",
+                        "verbose"
+                    ],
+                    "default": "off",
+                    "description": "Trace communication with the P4 language server."
+                }
+            }
         }
     },
     "scripts": {
-        "vscode:prepublish": "npm run compile",
-        "convert_yaml": "npx js-yaml syntaxes/p4.tmLanguage.yaml > syntaxes/p4.tmLanguage.json",
-        "compile": "tsc -p ./",
-        "lint": "eslint . --ext .ts,.tsx",
-        "watch": "tsc -watch -p ./",
-        "antlr4ts": "antlr4ts -visitor ./src/grammar/P4.g4"
+        "vscode:prepublish": "npm run build",
+        "compile": "tsc -p .",
+        "check-types": "tsc -p . --noEmit",
+        "build": "npm run check-types && node scripts/build.mjs",
+        "watch": "node scripts/build.mjs --watch",
+        "lint": "eslint src scripts test",
+        "test": "npm run compile && node --test test/*.test.cjs",
+        "gen:parser": "cd grammar && tree-sitter generate && tree-sitter build --wasm -o ../assets/tree-sitter-p4.wasm",
+        "package": "vsce package --no-dependencies"
     },
     "devDependencies": {
-        "@types/node": "^12.12.0",
-        "@types/vscode": "^1.42.0",
-        "@typescript-eslint/eslint-plugin": "^4.16.0",
-        "@typescript-eslint/parser": "^4.16.0",
-        "eslint": "^7.21.0",
-        "typescript": "^4.2.2",
-        "antlr4": "^4.9.2",
-        "antlr4ts": "^0.5.0-alpha.4",
-        "antlr4ts-cli": "^0.5.0-alpha.4"
+        "@types/node": "^22.0.0",
+        "@types/vscode": "^1.96.0",
+        "@vscode/vsce": "^4.0.0",
+        "esbuild": "^0.28.2",
+        "eslint": "^9.0.0",
+        "tree-sitter-cli": "0.27.1",
+        "typescript": "^5.9.3",
+        "typescript-eslint": "^8.46.1"
     },
     "dependencies": {
-        "antlr4ts": "^0.5.0-alpha.4"
-    }
+        "vscode-languageclient": "^9.0.1",
+        "vscode-languageserver": "^9.0.1",
+        "vscode-languageserver-textdocument": "^1.0.12",
+        "vscode-uri": "^3.1.0",
+        "web-tree-sitter": "0.27.1"
+    },
+    "license": "Apache-2.0"
 }
