@@ -1,0 +1,31 @@
+{
+  "retrieved_on": "2026-10-10",
+  "publisher": "The P4 Language Consortium",
+  "specifications_index": "https://p4.org/specifications/",
+  "documents": [
+    {
+      "file": "P4-16-working-spec.html",
+      "source": "https://p4lang.github.io/p4-spec/docs/P4-16-working-spec.html",
+      "status": "working draft",
+      "version": "v1.2.5",
+      "document_date": "2026-09-17",
+      "sha256": "ff2fc8829399179eb99829138e70b8b8ac373b8e6216010be1dc811375a6452c"
+    },
+    {
+      "file": "P4-16-working-spec.pdf",
+      "source": "https://p4lang.github.io/p4-spec/docs/P4-16-working-spec.pdf",
+      "status": "working draft",
+      "version": "v1.2.5",
+      "document_date": "2026-09-17",
+      "sha256": "17053350c31fe3aea07500b35bffad68c4481599d1e2a57341820c015e3ab016"
+    },
+    {
+      "file": "P4-16-spec-v1.2.5.pdf",
+      "source": "https://p4.org/wp-content/uploads/sites/53/2024/10/P4-16-spec-v1.2.5.pdf",
+      "status": "release",
+      "version": "1.2.5",
+      "document_date": "2024-10-11",
+      "sha256": "bf2468c386937155e8c58b3291533688eaafa2c2c74df7c970a70d2fc06e4798"
+    }
+  ]
+}
