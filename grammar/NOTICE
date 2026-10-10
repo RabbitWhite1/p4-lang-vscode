@@ -1,0 +1,9 @@
+The P4 Tree-sitter grammar was adapted from:
+https://github.com/oxidecomputer/tree-sitter-p4
+Author: Ryan Goodfellow
+License: MPL-2.0 (see LICENSE)
+
+The grammar has been substantially modified to follow the P4_16 v1.2.5
+specification, expose named fields for semantic analysis, and support additional
+declarations, expressions, and incomplete editor input. The generated WASM
+parser is distributed with its corresponding grammar source in this extension.
