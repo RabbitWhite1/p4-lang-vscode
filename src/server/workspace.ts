@@ -59,11 +59,13 @@ export class Workspace {
         const existing = this.cache.get(uri);
         if (existing && !existing.dirty) { return existing.unit; }
         const pending = this.pending.get(uri);
-        if (pending) { return pending; }
+        if (pending) { await pending; return this.get(uri); }
         const result = this.build(uri);
         this.pending.set(uri, result);
-        try { return await result; }
+        let unit: TranslationUnit;
+        try { unit = await result; }
         finally { this.pending.delete(uri); }
+        return this.cache.get(uri)?.dirty ? this.get(uri) : unit;
     }
     diagnostics(uri: string): Map<string, Diagnostic[]> { return this.cache.get(uri)?.diagnostics ?? new Map(); }
 

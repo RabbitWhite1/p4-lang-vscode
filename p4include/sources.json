@@ -1,0 +1,33 @@
+{
+  "repository": "https://github.com/p4lang/p4c",
+  "revision": "4b32c7eedd894547af48d8b06062f23930ad6480",
+  "retrieved": "2026-10-10",
+  "psaVariant": "BMv2",
+  "files": [
+    {
+      "file": "core.p4",
+      "url": "https://raw.githubusercontent.com/p4lang/p4c/4b32c7eedd894547af48d8b06062f23930ad6480/p4include/core.p4",
+      "sha256": "bd66f54991b90029759c17a67b28c84505926d601a6fff789f0f5fb6e8bd3e43"
+    },
+    {
+      "file": "v1model.p4",
+      "url": "https://raw.githubusercontent.com/p4lang/p4c/4b32c7eedd894547af48d8b06062f23930ad6480/p4include/v1model.p4",
+      "sha256": "93693e6bdac5b9f31136efb5216c638df2e0bf5f15a04d258326b69991d68079"
+    },
+    {
+      "file": "psa.p4",
+      "url": "https://raw.githubusercontent.com/p4lang/p4c/4b32c7eedd894547af48d8b06062f23930ad6480/p4include/bmv2/psa.p4",
+      "sha256": "fccfb6ccef4e3563a61d16c002bb12baceb039f6bae16a3b318ea3eb2f6c7948"
+    },
+    {
+      "file": "pna.p4",
+      "url": "https://raw.githubusercontent.com/p4lang/p4c/4b32c7eedd894547af48d8b06062f23930ad6480/p4include/pna.p4",
+      "sha256": "a7316bea61780247081698a9fc2f1fb5a88ae68f6b774a647cd0ae7070eff2b2"
+    },
+    {
+      "file": "LICENSE",
+      "url": "https://raw.githubusercontent.com/p4lang/p4c/4b32c7eedd894547af48d8b06062f23930ad6480/LICENSES/Apache-2.0.txt",
+      "sha256": "074e6e32c86a4c0ef8b3ed25b721ca23aca83df277cd88106ef7177c354615ff"
+    }
+  ]
+}

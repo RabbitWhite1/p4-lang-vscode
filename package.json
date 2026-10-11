@@ -89,7 +89,7 @@
         "build": "npm run check-types && node scripts/build.mjs",
         "watch": "node scripts/build.mjs --watch",
         "lint": "eslint src scripts test",
-        "test": "npm run compile && node --test --test-isolation=none test/*.test.cjs",
+        "test": "npm run build && npm run compile && node --test --test-isolation=none test/*.test.cjs",
         "gen:parser": "cd grammar && tree-sitter generate && tree-sitter build --wasm -o ../assets/tree-sitter-p4.wasm",
         "package": "vsce package --no-dependencies"
     },
