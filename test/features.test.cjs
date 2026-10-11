@@ -105,6 +105,7 @@ test('bundled standard headers parse and provide packet and architecture definit
             const items = await features.completion(uri, { line: 2, character: 61 });
             assert.ok(items.some(item => item.label === 'packet_in'), name);
             assert.equal((await features.definition(uri, { line: 2, character: 12 }))[0].uri, URI.file(path.resolve('p4include/core.p4')).toString());
+            await assert.rejects(features.prepareRename(uri, { line: 2, character: 12 }), /library symbols are read-only/);
         } finally { workspace.dispose(); }
     }
 });

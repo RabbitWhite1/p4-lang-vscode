@@ -1,6 +1,19 @@
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const { preprocess, evaluateCondition } = require('../out/server/preprocessor');
+
+test('condition macros preserve textual precedence and logical short-circuiting', () => {
+    const macros = new Map([
+        ['X', { name: 'X', value: '1 + 2', uri: '', start: 0, end: 0 }],
+        ['EMPTY', { name: 'EMPTY', value: '', uri: '', start: 0, end: 0 }]
+    ]);
+    assert.equal(evaluateCondition('X * 3 == 7', macros), 1);
+    assert.equal(evaluateCondition('defined(X) && !defined(MISSING)', macros), 1);
+    assert.equal(evaluateCondition('0 && (1 / 0)', macros), 0);
+    assert.equal(evaluateCondition('1 || (1 / 0)', macros), 1);
+    assert.equal(evaluateCondition('010 == 8', macros), 1);
+    assert.throws(() => evaluateCondition('EMPTY', macros), /Incomplete/);
+});
 const macro = (name, value) => ({ name, value, uri: '', start: 0, end: 0 });
 
 test('conditional branches preserve source positions and nested selection', async () => {

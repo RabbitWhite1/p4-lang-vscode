@@ -30,14 +30,39 @@ const precedence: Record<string, number> = {
 
 /** A bounded evaluator for #if expressions. Never executes source as JS. */
 export function evaluateCondition(expression: string, macros: Map<string, Macro>, seen = new Set<string>()): number {
-    const tokens = expression.match(/defined|[A-Za-z_][A-Za-z0-9_]*|0[xX][0-9a-fA-F]+[uUlL]*|[0-9]+[uUlL]*|\|\||&&|==|!=|<=|>=|<<|>>|[()!~+*/%<>&^|?:-]/g) ?? [];
-    if (tokens.join('') !== expression.replace(/\s/g, '')) { throw new Error('Unsupported preprocessor expression'); }
+    const tokenize = (value: string): string[] => {
+        const tokens = value.match(/[A-Za-z_][A-Za-z0-9_]*|0[xX][0-9a-fA-F]+[uUlL]*|[0-9]+[uUlL]*|\|\||&&|==|!=|<=|>=|<<|>>|[()!~+*/%<>&^|?:-]/g) ?? [];
+        if (tokens.join('') !== value.replace(/\s/g, '')) { throw new Error('Unsupported preprocessor expression'); }
+        return tokens;
+    };
+    const expand = (tokens: string[], ancestors: Set<string>): string[] => {
+        const result: string[] = [];
+        for (let index = 0; index < tokens.length; index++) {
+            const token = tokens[index];
+            if (token === 'defined') {
+                result.push(token);
+                if (tokens[index + 1] === '(') { result.push(tokens[++index]); }
+                if (tokens[index + 1]) { result.push(tokens[++index]); }
+                continue;
+            }
+            const macro = macros.get(token);
+            if (!macro) { result.push(token); }
+            else {
+                if (macro.parameters) { throw new Error('Function macros in #if require a full preprocessor'); }
+                if (ancestors.has(token) || ancestors.size >= 32) { throw new Error('Recursive preprocessor definition'); }
+                result.push(...expand(tokenize(macro.value), new Set([...ancestors, token])));
+            }
+            if (result.length > 16384) { throw new Error('Preprocessor expansion limit exceeded'); }
+        }
+        return result;
+    };
+    const tokens = expand(tokenize(expression), seen);
     let index = 0;
-    const primary = (): number => {
+    const primary = (evaluate: boolean): number => {
         const token = tokens[index++];
         if (!token) { throw new Error('Incomplete preprocessor expression'); }
         if (token === '(') {
-            const value = parse(0);
+            const value = parse(0, evaluate);
             if (tokens[index++] !== ')') { throw new Error('Unclosed preprocessor expression'); }
             return value;
         }
@@ -50,24 +75,24 @@ export function evaluateCondition(expression: string, macros: Map<string, Macro>
             return Number(macros.has(name));
         }
         if (['!', '~', '+', '-'].includes(token)) {
-            const value = primary();
+            const value = primary(evaluate);
             return token === '!' ? Number(!value) : token === '~' ? ~value : token === '-' ? -value : value;
         }
-        if (/^[0-9]/.test(token)) { return Number(token.replace(/[uUlL]+$/, '')); }
+        if (/^[0-9]/.test(token)) {
+            const value = token.replace(/[uUlL]+$/, '');
+            return /^0[0-7]+$/.test(value) ? Number.parseInt(value, 8) : Number(value);
+        }
         if (/^[A-Za-z_]\w*$/.test(token)) {
-            const macro = macros.get(token);
-            if (!macro) { return 0; }
-            if (macro.parameters) { throw new Error('Function macros in #if require a full preprocessor'); }
-            if (seen.has(token) || seen.size >= 32) { throw new Error('Recursive preprocessor definition'); }
-            return evaluateCondition(macro.value || '1', macros, new Set([...seen, token]));
+            return 0;
         }
         throw new Error(`Unexpected preprocessor token ${token}`);
     };
-    const parse = (minimum: number): number => {
-        let left = primary();
+    const parse = (minimum: number, evaluate = true): number => {
+        let left = primary(evaluate);
         while (index < tokens.length && (precedence[tokens[index]] ?? -1) >= minimum) {
             const operator = tokens[index++];
-            const right = parse(precedence[operator] + 1);
+            const right = parse(precedence[operator] + 1, evaluate && !(operator === '&&' && !left || operator === '||' && Boolean(left)));
+            if (!evaluate) { left = 0; continue; }
             switch (operator) {
                 case '||': left = Number(Boolean(left || right)); break;
                 case '&&': left = Number(Boolean(left && right)); break;
@@ -98,7 +123,7 @@ export function evaluateCondition(expression: string, macros: Map<string, Macro>
 
 /** Select active branches and follow includes in source order, preserving offsets. */
 export async function preprocess(uri: string, source: string, environment: Map<string, Macro>,
-    includeFile?: (include: Include) => Promise<void>): Promise<Preprocessed> {
+    includeFile?: (include: Include) => Promise<void>, pragmaOnce?: () => void): Promise<Preprocessed> {
     const clean = stripComments(source);
     const chunks: string[] = [];
     const macros: Macro[] = [];
@@ -162,6 +187,7 @@ export async function preprocess(uri: string, source: string, environment: Map<s
                     await includeFile?.(include);
                 } else { issue('Include must use a quoted path or an angle-bracket path'); }
             } else if (active && command === 'error') { issue(`#error ${body}`); }
+            else if (active && command === 'pragma' && body === 'once') { pragmaOnce?.(); }
             chunks.push(blank(raw));
         } else { chunks.push(active ? raw : blank(raw)); }
         offset += raw.length;

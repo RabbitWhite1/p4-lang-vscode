@@ -26,9 +26,10 @@ export class Workspace {
             maxNumberOfProblems: typeof settings.maxNumberOfProblems === 'number' && Number.isFinite(settings.maxNumberOfProblems)
                 ? Math.max(0, Math.floor(settings.maxNumberOfProblems)) : defaultSettings.maxNumberOfProblems
         };
+        const previous = uri ? this.configuration(uri) : this.settings;
         if (uri) { this.configurations.set(uri, value); }
         else { this.settings = value; this.configurations.clear(); }
-        this.invalidate();
+        if (!uri || JSON.stringify(previous) !== JSON.stringify(value)) { this.invalidate(); }
     }
     configuration(uri: string): Settings { return this.configurations.get(uri) ?? this.settings; }
     update(uri: string, text: string, version: number): void {
@@ -40,7 +41,7 @@ export class Workspace {
         this.configurations.delete(uri);
         this.invalidate(uri);
         const entry = this.cache.get(uri);
-        if (entry) { for (const file of entry.parsed.values()) { file.dispose(); } this.cache.delete(uri); }
+        if (entry && !this.pending.has(uri)) { for (const file of entry.parsed.values()) { file.dispose(); } this.cache.delete(uri); }
     }
     invalidate(uri?: string): void {
         this.revision++;
@@ -57,7 +58,11 @@ export class Workspace {
     }
     async get(uri: string): Promise<TranslationUnit> {
         const existing = this.cache.get(uri);
-        if (existing && !existing.dirty) { return existing.unit; }
+        if (existing && !existing.dirty) {
+            this.cache.delete(uri);
+            this.cache.set(uri, existing);
+            return existing.unit;
+        }
         const pending = this.pending.get(uri);
         if (pending) { await pending; return this.get(uri); }
         const result = this.build(uri);
@@ -87,7 +92,6 @@ export class Workspace {
             if (source === undefined || once.has(uri)) { return; }
             const guard = /^\s*#\s*ifndef\s+(\w+)\s*\r?\n\s*#\s*define\s+\1\b/.exec(stripComments(source));
             if (guard && environment.has(guard[1])) { return; }
-            if (/^\s*#\s*pragma\s+once\b/m.test(stripComments(source))) { once.add(uri); }
             processing.add(uri);
             const includes = new Map<number, string>();
             const includeIssues: { start: number; end: number; message: string }[] = [];
@@ -103,12 +107,16 @@ export class Workspace {
                     return;
                 }
                 await load(resolved, depth + 1);
-            });
+            }, () => once.add(uri));
             processing.delete(uri);
             let file = parsed.get(uri);
             if (file) { file.update(source, preprocessed.text, this.open.get(uri)?.version ?? 0); }
             else { file = await ParsedFile.create(uri, source, preprocessed.text, this.open.get(uri)?.version ?? 0); parsed.set(uri, file); }
             const model = extractModel(file, preprocessed);
+            const filename = URI.parse(uri).scheme === 'file' ? URI.parse(uri).fsPath : '';
+            if ([path.resolve(__dirname, '../../p4include'), path.resolve(__dirname, '../p4include')].some(directory => path.dirname(filename) === directory)) {
+                for (const symbol of model.symbols) { symbol.defaultLibrary = true; }
+            }
             // The include target stays on the record without changing public source coordinates.
             for (const include of model.preprocessing.includes) { includeTargets.set(include, includes.get(include.start)); }
             files.set(uri, model);
@@ -129,6 +137,13 @@ export class Workspace {
         for (const [uri, file] of parsed) { if (!files.has(uri)) { file.dispose(); parsed.delete(uri); } }
         const unit = new TranslationUnit(rootUri, files);
         this.cache.set(rootUri, { unit, parsed, diagnostics, dirty: revision !== this.revision });
+        // Workspace searches parse files on demand; keep idle translation units bounded.
+        for (const [uri, entry] of this.cache) {
+            if (this.cache.size <= 32) { break; }
+            if (uri === rootUri || this.open.has(uri) || this.pending.has(uri)) { continue; }
+            for (const file of entry.parsed.values()) { file.dispose(); }
+            this.cache.delete(uri);
+        }
         return unit;
     }
 
@@ -173,6 +188,7 @@ export class Workspace {
         for (const entry of this.cache.values()) { for (const file of entry.parsed.values()) { file.dispose(); } }
         this.cache.clear();
     }
+    async settle(): Promise<void> { await Promise.allSettled(this.pending.values()); }
 }
 
 export const includeTargets = new WeakMap<Include, string | undefined>();

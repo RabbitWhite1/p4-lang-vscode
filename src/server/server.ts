@@ -7,7 +7,7 @@ import { Settings, Workspace } from './workspace';
 const connection = createConnection(ProposedFeatures.all);
 const documents = new TextDocuments(TextDocument);
 const workspace = new Workspace();
-const features = new Features(workspace);
+const features = new Features(workspace, settingsFor);
 let hasConfiguration = false;
 let hasWorkspaceFolders = false;
 let configGeneration = 0;
@@ -141,9 +141,10 @@ connection.onPrepareRename((params, token) => request(params.textDocument.uri, t
 connection.onRenameRequest((params, token) => request(params.textDocument.uri, token, () => features.rename(params.textDocument.uri, params.position, params.newName, token)));
 connection.languages.semanticTokens.on((params, token) => request(params.textDocument.uri, token, () => features.semanticTokens(params.textDocument.uri, token)));
 connection.onFoldingRanges((params, token) => request(params.textDocument.uri, token, () => features.foldingRanges(params.textDocument.uri)));
-connection.onShutdown(() => {
+connection.onShutdown(async () => {
     stopped = true;
     if (timer) { clearTimeout(timer); }
+    await workspace.settle();
     workspace.dispose();
 });
 documents.listen(connection);

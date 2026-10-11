@@ -129,7 +129,7 @@ module.exports = grammar({
     for_statement: $ => seq('for', '(', choice(
       seq(optional($.for_initializer), ';', optional($._expression), ';', commaSep($.for_update)),
       seq(field('type', $.type_ref), field('name', $.identifier), 'in', $._expression)), ')', $._statement),
-    for_initializer: $ => choice(seq($.type_ref, $.identifier, '=', $._expression), $.for_update),
+    for_initializer: $ => choice(seq(field('type', $.type_ref), field('name', $.identifier), '=', $._expression), $.for_update),
     for_update: $ => choice(seq($._expression, '=', $._expression), $._expression),
 
     _expression: $ => choice($.identifier, $.integer, $.string, $.boolean,

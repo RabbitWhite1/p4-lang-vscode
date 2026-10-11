@@ -21,6 +21,7 @@ export interface P4Symbol {
     detail: string;
     documentation: string;
     readonly?: boolean;
+    defaultLibrary?: boolean;
     flavor?: string;
 }
 export class Scope {
@@ -82,6 +83,7 @@ const kinds: Record<string, SymbolKind> = {
     instantiation: SymbolKind.Variable, field_declaration: SymbolKind.Field,
     parameter: SymbolKind.Variable, type_parameter: SymbolKind.TypeParameter,
     enum_member: SymbolKind.EnumMember, table_declaration: SymbolKind.Object,
+    for_initializer: SymbolKind.Variable, for_statement: SymbolKind.Variable,
     table_property: SymbolKind.Property, state_declaration: SymbolKind.Event
 };
 const containers = new Set(['aggregate_declaration', 'enum_declaration', 'extern_declaration',
@@ -105,7 +107,7 @@ export function extractModel(file: ParsedFile, preprocessing: Preprocessed): Fil
     const symbols: P4Symbol[] = [];
     const declarations = new Map<number, P4Symbol>();
     const visit = (node: Node, parent: Scope) => {
-        let scope = parent;
+        let scope = node.type === 'for_statement' ? new Scope(uri, node.startIndex, node.endIndex, parent) : parent;
         const prototype = node.namedChildren.find(child => child.type === 'function_prototype');
         const declaration = prototype ?? node;
         const name = declaration.childForFieldName('name');
@@ -121,7 +123,7 @@ export function extractModel(file: ParsedFile, preprocessing: Preprocessed): Fil
                 scope, type: readType(declaration.childForFieldName('type')), parameters: [], typeParameters: [],
                 detail: file.document.getText().slice(node.startIndex, signatureEnd).replace(/\s+/g, ' ').trim().replace(/;$/, ''),
                 documentation: documentation(file.document.getText(), node.startIndex),
-                readonly: node.type === 'constant_declaration', flavor: node.type === 'aggregate_declaration' ? node.childForFieldName('kind')?.text : node.type };
+                readonly: node.type === 'constant_declaration' || node.type === 'enum_member', flavor: node.type === 'aggregate_declaration' ? node.childForFieldName('kind')?.text : node.type };
             symbols.push(symbol);
             scope.symbols.push(symbol);
             declarations.set(start, symbol);
@@ -129,7 +131,7 @@ export function extractModel(file: ParsedFile, preprocessing: Preprocessed): Fil
                 scope = new Scope(uri, node.startIndex, node.endIndex, parent, symbol);
                 symbol.bodyScope = scope;
             }
-        } else if (node.type === 'block_statement' || node.type === 'for_statement') {
+        } else if (node.type === 'block_statement') {
             scope = new Scope(uri, node.startIndex, node.endIndex, parent);
         }
         for (const child of node.namedChildren) { visit(child, scope); }
@@ -166,7 +168,7 @@ export class TranslationUnit {
         let scope: Scope | undefined = file.root.at(offset);
         while (scope) {
             for (const symbol of scope.symbols) {
-                if (['variable_declaration', 'constant_declaration', 'instantiation'].includes(symbol.flavor ?? '') && scope.parent && symbol.start > offset) { continue; }
+                if ((symbol.kind === SymbolKind.Variable || symbol.kind === SymbolKind.Constant) && scope.parent && symbol.start > offset) { continue; }
                 if (!result.has(symbol.name)) { result.set(symbol.name, symbol); }
             }
             scope = scope.parent;
@@ -187,6 +189,20 @@ export class TranslationUnit {
         const declaration = file?.declarations.get(node.startIndex);
         if (declaration) { return declaration; }
         let parent = node.parent;
+        if (parent?.type === 'annotation' && parent.childForFieldName('name')?.startIndex === node.startIndex) { return undefined; }
+        if (parent?.type === 'struct_initializer' && parent.childForFieldName('name')?.startIndex === node.startIndex) {
+            const type = readType(parent.parent?.childForFieldName('type') ?? null);
+            return this.members(uri, node.startIndex, type).find(member => member.name === node.text);
+        }
+        if (parent?.type === 'argument' && parent.childForFieldName('name')?.startIndex === node.startIndex) {
+            const call = parent.parent?.parent;
+            const fn = call?.childForFieldName('function');
+            const symbol = fn?.type === 'member_expression' ? this.resolveMemberExpression(uri, fn) : fn ? this.resolveNode(uri, fn) : undefined;
+            return symbol?.parameters.find(parameter => parameter.name === node.text);
+        }
+        if (parent?.type === 'key_element' && parent.childForFieldName('match_kind')?.startIndex === node.startIndex) {
+            return this.members(uri, node.startIndex, { name: 'match_kind', arguments: [] }).find(member => member.name === node.text);
+        }
         if (parent?.type === 'member_name') { parent = parent.parent; }
         if (parent?.type === 'member_expression' && parent.childForFieldName('property')?.startIndex === node.startIndex) {
             const object = parent.childForFieldName('object');
@@ -277,7 +293,10 @@ export class TranslationUnit {
         if (!symbol) { return []; }
         if (symbol.flavor === 'typedef_declaration') { return this.members(symbol.uri, symbol.start, symbol.type, seen); }
         const bindings = new Map(symbol.typeParameters.map((name, index) => [name, type.arguments[index]] as const).filter(([, value]) => value));
-        const result: P4Symbol[] = (symbol.bodyScope?.symbols ?? []).filter(member => !['parameter', 'type_parameter', 'constructor_declaration'].includes(member.flavor ?? ''))
+        const bodySymbols = ['error', 'match_kind'].includes(type.name)
+            ? [...this.files.values()].flatMap(model => model.root.symbols.filter(declaration => declaration.name === type.name).flatMap(declaration => declaration.bodyScope?.symbols ?? []))
+            : symbol.bodyScope?.symbols ?? [];
+        const result: P4Symbol[] = bodySymbols.filter(member => !['parameter', 'type_parameter', 'constructor_declaration'].includes(member.flavor ?? ''))
             .map(member => ({ ...member, type: substitute(member.type, bindings),
                 parameters: member.parameters.map(parameter => ({ ...parameter, type: substitute(parameter.type, bindings) })) }));
         if (symbol.flavor === 'header' || symbol.flavor === 'header_union') {

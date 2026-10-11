@@ -7,13 +7,13 @@ const os = require('node:os');
 const { once } = require('node:events');
 const { URI } = require('vscode-uri');
 const { TextDocument } = require('vscode-languageserver-textdocument');
-const { createMessageConnection, StreamMessageReader, StreamMessageWriter } = require('vscode-jsonrpc/node');
+const { createMessageConnection, StreamMessageReader, StreamMessageWriter, IPCMessageReader, IPCMessageWriter } = require('vscode-jsonrpc/node');
 
 async function server(t, options = {}) {
-    const child = spawn(process.execPath, [options.serverPath ?? path.resolve('dist/server.js'), '--stdio'], { stdio: ['pipe', 'pipe', 'pipe'] });
+    const child = spawn(process.execPath, [options.serverPath ?? process.env.P4_SERVER_PATH ?? path.resolve('dist/server.js'), options.ipc ? '--node-ipc' : '--stdio'], { stdio: options.ipc ? ['pipe', 'pipe', 'pipe', 'ipc'] : ['pipe', 'pipe', 'pipe'] });
     let stderr = '';
     child.stderr.on('data', chunk => { stderr += chunk; });
-    const connection = createMessageConnection(new StreamMessageReader(child.stdout), new StreamMessageWriter(child.stdin));
+    const connection = createMessageConnection(options.ipc ? new IPCMessageReader(child) : new StreamMessageReader(child.stdout), options.ipc ? new IPCMessageWriter(child) : new StreamMessageWriter(child.stdin));
     const messages = [];
     const waiters = new Set();
     const logs = [];
@@ -124,4 +124,18 @@ test('standalone LSP clients without workspace configuration can open untitled d
     const { connection, request } = await server(t, { capabilities: {} });
     await connection.sendNotification('textDocument/didOpen', { textDocument: { uri: 'untitled:plain.p4', languageId: 'p4', version: 1, text: 'header H {}' } });
     assert.equal((await request('textDocument/documentSymbol', { textDocument: { uri: 'untitled:plain.p4' } }))[0].name, 'H');
+});
+
+test('VS Code IPC transport loads the shipped WASM and navigates bundled standard headers', { timeout: 15000 }, async t => {
+    const { connection, request } = await server(t, { ipc: true });
+    const uri = 'untitled:core.p4';
+    const source = '#include <core.p4>\nheader H { bit<8> value; }\nparser P(packet_in packet, out H h) { state start { packet.extract(h); transition accept; } }';
+    const doc = TextDocument.create(uri, 'p4', 1, source);
+    await connection.sendNotification('textDocument/didOpen', { textDocument: { uri, languageId: 'p4', version: 1, text: source } });
+    const items = await request('textDocument/completion', { textDocument: { uri }, position: doc.positionAt(source.indexOf('packet.extract') + 7) });
+    assert.ok(items.some(item => item.label === 'extract'));
+    const definition = await request('textDocument/definition', { textDocument: { uri }, position: doc.positionAt(source.indexOf('packet_in')) });
+    const expected = path.resolve(path.dirname(process.env.P4_SERVER_PATH ?? path.resolve('dist/server.js')), '../p4include/core.p4');
+    assert.equal(definition[0].uri, URI.file(expected).toString());
+    await assert.rejects(request('textDocument/prepareRename', { textDocument: { uri }, position: doc.positionAt(source.indexOf('packet_in')) }), /library symbols are read-only/);
 });

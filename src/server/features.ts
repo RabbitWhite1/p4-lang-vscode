@@ -51,7 +51,7 @@ function location(unit: TranslationUnit, symbol: P4Symbol): Location | undefined
 }
 
 export class Features {
-    constructor(readonly workspace: Workspace) {}
+    constructor(readonly workspace: Workspace, private readonly prepare: (uri: string) => Promise<void> = async () => {}) {}
 
     async context(uri: string, position?: Position): Promise<{ unit: TranslationUnit; model?: FileModel; offset: number }> {
         let unit = await this.workspace.get(uri);
@@ -162,6 +162,7 @@ export class Features {
         const results = new Map<string, SymbolInformation>();
         for (const uri of await this.workspace.projectFiles()) {
             cancelled(token);
+            await this.prepare(uri);
             const unit = await this.workspace.get(uri);
             for (const model of unit.files.values()) {
                 for (const symbol of model.symbols) {
@@ -184,6 +185,7 @@ export class Features {
     async prepareRename(uri: string, position: Position): Promise<PrepareRenameResult> {
         const { unit, model, offset } = await this.context(uri, position);
         const symbol = unit.symbolAt(uri, offset);
+        if (symbol?.defaultLibrary) { throw new ResponseError(LSPErrorCodes.RequestFailed, 'Bundled library symbols are read-only. Use project-owned headers to edit them.'); }
         if (!model || !symbol?.uri || symbol.flavor === 'macro' || ['error', 'match_kind'].includes(symbol.name) || keywords.has(symbol.name)) {
             throw new ResponseError(LSPErrorCodes.RequestFailed, 'This symbol cannot be renamed safely.');
         }
@@ -196,6 +198,7 @@ export class Features {
     }
 
     async rename(uri: string, position: Position, newName: string, token?: CancellationToken): Promise<WorkspaceEdit> {
+        for (const file of await this.workspace.projectFiles()) { cancelled(token); await this.prepare(file); }
         await this.prepareRename(uri, position);
         if (!/^[A-Za-z_]\w*$/.test(newName) || keywords.has(newName)) {
             throw new ResponseError(LSPErrorCodes.RequestFailed, 'Use a P4 identifier that is not a reserved keyword.');
@@ -236,7 +239,7 @@ export class Features {
         scan(initial);
         for (const uri of await this.workspace.projectFiles()) {
             cancelled(token);
-            if (uri !== initial.rootUri) { scan(await this.workspace.get(uri)); }
+            if (uri !== initial.rootUri) { await this.prepare(uri); scan(await this.workspace.get(uri)); }
         }
         return [...result.values()];
     }
@@ -256,7 +259,7 @@ export class Features {
         }
         for (const record of [...records.values()].sort((a, b) => a.start - b.start)) {
             const position = model.file.document.positionAt(record.start);
-            const modifiers = (record.declaration ? 1 : 0) | (record.symbol.readonly ? 2 : 0) | (!record.symbol.uri ? 4 : 0);
+            const modifiers = (record.declaration ? 1 : 0) | (record.symbol.readonly ? 2 : 0) | (!record.symbol.uri || record.symbol.defaultLibrary ? 4 : 0);
             builder.push(position.line, position.character, record.end - record.start, tokenTypes.indexOf(semanticType(record.symbol)), modifiers);
         }
         return builder.build();
