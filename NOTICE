@@ -12,6 +12,8 @@ The adapted Tree-sitter grammar and generated parser retain MPL-2.0,
 Ryan Goodfellow attribution, and Zhanghan Wang modification notices; see
 grammar/LICENSE and grammar/NOTICE.
 
-Vendored P4 headers, historical architecture fixtures, language specifications,
-and the TextMate JSON schema retain their upstream attribution and licensing.
+Vendored P4 headers, tutorial solutions, historical architecture fixtures,
+language specifications, and the TextMate JSON schema retain their upstream
+attribution and licensing. See examples/tutorials/sources.json and
+examples/tutorials/LICENSES/Apache-2.0.txt for the imported tutorial sources.
 Bundled JavaScript and runtime licenses are in dist/THIRD_PARTY_LICENSES.txt.

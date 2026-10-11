@@ -1,0 +1,98 @@
+{
+  "repository": "https://github.com/p4lang/tutorials",
+  "revision": "b935e466363679495929e6827b12dd74de27e2dd",
+  "retrieved": "2026-10-10",
+  "files": [
+    {
+      "file": "basic/basic.p4",
+      "upstreamPath": "exercises/basic/solution/basic.p4",
+      "url": "https://raw.githubusercontent.com/p4lang/tutorials/b935e466363679495929e6827b12dd74de27e2dd/exercises/basic/solution/basic.p4",
+      "sha256": "f7294f2e4872c3c4f43161bd1a9a62e921d7b8a34cda274218ae862df5e3c834",
+      "license": "Apache-2.0"
+    },
+    {
+      "file": "basic_tunnel/basic_tunnel.p4",
+      "upstreamPath": "exercises/basic_tunnel/solution/basic_tunnel.p4",
+      "url": "https://raw.githubusercontent.com/p4lang/tutorials/b935e466363679495929e6827b12dd74de27e2dd/exercises/basic_tunnel/solution/basic_tunnel.p4",
+      "sha256": "e4b9fdd685a4b934bac0a7723151dbb49c6eeb9a7175352bcc1440e5d13e974d",
+      "license": "Apache-2.0"
+    },
+    {
+      "file": "calc/calc.p4",
+      "upstreamPath": "exercises/calc/solution/calc.p4",
+      "url": "https://raw.githubusercontent.com/p4lang/tutorials/b935e466363679495929e6827b12dd74de27e2dd/exercises/calc/solution/calc.p4",
+      "sha256": "b4a51f911924fb0bc77add2753d72176c207aba3607efd631a3a600159b96f2c",
+      "license": "Apache-2.0"
+    },
+    {
+      "file": "ecn/ecn.p4",
+      "upstreamPath": "exercises/ecn/solution/ecn.p4",
+      "url": "https://raw.githubusercontent.com/p4lang/tutorials/b935e466363679495929e6827b12dd74de27e2dd/exercises/ecn/solution/ecn.p4",
+      "sha256": "9dae563203df1def2fcedab8f28494bb03bbb744c016c2ddc841ac4ccc32ed25",
+      "license": "Apache-2.0"
+    },
+    {
+      "file": "firewall/firewall.p4",
+      "upstreamPath": "exercises/firewall/solution/firewall.p4",
+      "url": "https://raw.githubusercontent.com/p4lang/tutorials/b935e466363679495929e6827b12dd74de27e2dd/exercises/firewall/solution/firewall.p4",
+      "sha256": "5e1286ddbbc583d00fb5cbbb7c5f7a07076b4c200b0e9ed931c58e6b03230b19",
+      "license": "Apache-2.0"
+    },
+    {
+      "file": "flowcache/flowcache.p4",
+      "upstreamPath": "exercises/flowcache/solution/flowcache.p4",
+      "url": "https://raw.githubusercontent.com/p4lang/tutorials/b935e466363679495929e6827b12dd74de27e2dd/exercises/flowcache/solution/flowcache.p4",
+      "sha256": "c568e570fe0296656516d3cb1bfad548343a25b97b98bab1e926ef30b31e463a",
+      "license": "Apache-2.0"
+    },
+    {
+      "file": "link_monitor/link_monitor.p4",
+      "upstreamPath": "exercises/link_monitor/solution/link_monitor.p4",
+      "url": "https://raw.githubusercontent.com/p4lang/tutorials/b935e466363679495929e6827b12dd74de27e2dd/exercises/link_monitor/solution/link_monitor.p4",
+      "sha256": "04a1884d1cd39cb6713c93d8a628acab715606f5ce3a0c32759afa8e94fae571",
+      "license": "Apache-2.0"
+    },
+    {
+      "file": "load_balance/load_balance.p4",
+      "upstreamPath": "exercises/load_balance/solution/load_balance.p4",
+      "url": "https://raw.githubusercontent.com/p4lang/tutorials/b935e466363679495929e6827b12dd74de27e2dd/exercises/load_balance/solution/load_balance.p4",
+      "sha256": "15d669d545cd7c97a466e8ede70168726d97c2eb48c1d27a906a2b49e8ab6758",
+      "license": "Apache-2.0"
+    },
+    {
+      "file": "mri/mri.p4",
+      "upstreamPath": "exercises/mri/solution/mri.p4",
+      "url": "https://raw.githubusercontent.com/p4lang/tutorials/b935e466363679495929e6827b12dd74de27e2dd/exercises/mri/solution/mri.p4",
+      "sha256": "e7d4d7fe30ceb955f83dbd1ff2b39fe4e77e2788cf3deafebbeaf3011a92a7b6",
+      "license": "Apache-2.0"
+    },
+    {
+      "file": "multicast/multicast.p4",
+      "upstreamPath": "exercises/multicast/solution/multicast.p4",
+      "url": "https://raw.githubusercontent.com/p4lang/tutorials/b935e466363679495929e6827b12dd74de27e2dd/exercises/multicast/solution/multicast.p4",
+      "sha256": "308cdc52fbb7689ee833365dc54ff55a8636f40630140c5b29deacd7cd0d0268",
+      "license": "Apache-2.0"
+    },
+    {
+      "file": "qos/qos.p4",
+      "upstreamPath": "exercises/qos/solution/qos.p4",
+      "url": "https://raw.githubusercontent.com/p4lang/tutorials/b935e466363679495929e6827b12dd74de27e2dd/exercises/qos/solution/qos.p4",
+      "sha256": "9969890f19d4933c60e3f7477824715ba306eacbfa7fb3f0a27a027d660fff42",
+      "license": "Apache-2.0"
+    },
+    {
+      "file": "source_routing/source_routing.p4",
+      "upstreamPath": "exercises/source_routing/solution/source_routing.p4",
+      "url": "https://raw.githubusercontent.com/p4lang/tutorials/b935e466363679495929e6827b12dd74de27e2dd/exercises/source_routing/solution/source_routing.p4",
+      "sha256": "f3a937b55630e1c9a69a11799c1ed3dc456c76e3a9be8ff1bba96a088cc5615a",
+      "license": "Apache-2.0"
+    },
+    {
+      "file": "LICENSES/Apache-2.0.txt",
+      "upstreamPath": "LICENSES/Apache-2.0.txt",
+      "url": "https://raw.githubusercontent.com/p4lang/tutorials/b935e466363679495929e6827b12dd74de27e2dd/LICENSES/Apache-2.0.txt",
+      "sha256": "074e6e32c86a4c0ef8b3ed25b721ca23aca83df277cd88106ef7177c354615ff",
+      "license": "Apache-2.0"
+    }
+  ]
+}

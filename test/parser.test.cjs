@@ -8,8 +8,9 @@ const path = require('node:path');
 const { ParsedFile, walk } = require('../out/server/parser');
 const { preprocess } = require('../out/server/preprocessor');
 
-test('Tree-sitter parses the example P4 architectures and calculator program', async () => {
-    for (const name of fs.readdirSync('examples').filter(name => name.endsWith('.p4'))) {
+test('Tree-sitter parses all example programs and architecture fixtures', async () => {
+    const names = fs.readdirSync('examples', { recursive: true }).filter(name => name.endsWith('.p4')).sort();
+    for (const name of names) {
         const source = fs.readFileSync(path.join('examples', name), 'utf8');
         const uri = `file:///examples/${name}`;
         const masked = await preprocess(uri, source, new Map());

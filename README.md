@@ -169,7 +169,26 @@ sequenceDiagram
 
 ## Examples
 
-[examples/](examples/) contains the P4 calculator program in [test.p4](examples/test.p4) and architecture/header fixtures used by parser tests. These historical header fixtures provide regression coverage; the server's pinned fallback headers are maintained separately in [p4include/](p4include/).
+[examples/tutorials/](examples/tutorials/) contains complete P4_16 solutions from [p4lang/tutorials](https://github.com/p4lang/tutorials), pinned at revision `b935e466363679495929e6827b12dd74de27e2dd`.
+
+| Example | What to explore |
+| --- | --- |
+| [Basic forwarding](examples/tutorials/basic/basic.p4) | Ethernet/IPv4 parsing, routing tables, and packet rewriting |
+| [Tunneling](examples/tutorials/basic_tunnel/basic_tunnel.p4) | Custom headers and tunnel forwarding |
+| [Calculator](examples/tutorials/calc/calc.p4) | A custom protocol and arithmetic actions |
+| [ECN](examples/tutorials/ecn/ecn.p4) | Queue metadata and congestion marking |
+| [Firewall](examples/tutorials/firewall/firewall.p4) | Registers, hashing, and a stateful Bloom filter |
+| [Flow cache](examples/tutorials/flowcache/flowcache.p4) | Cached forwarding tables and controller packet I/O |
+| [Link monitoring](examples/tutorials/link_monitor/link_monitor.p4) | Probe packets, counters, and header stacks |
+| [Load balancing](examples/tutorials/load_balance/load_balance.p4) | Hashing and equal-cost multipath forwarding |
+| [In-band telemetry](examples/tutorials/mri/mri.p4) | Collecting switch information in packet headers |
+| [Multicast](examples/tutorials/multicast/multicast.p4) | Multicast groups and packet replication |
+| [QoS](examples/tutorials/qos/qos.p4) | Traffic classification and differentiated-services marking |
+| [Source routing](examples/tutorials/source_routing/source_routing.p4) | Header stacks and parser loops |
+
+The imported files retain their upstream copyright notices and [Apache-2.0 license](examples/tutorials/LICENSES/Apache-2.0.txt) unchanged; [sources.json](examples/tutorials/sources.json) records their original paths and checksums. These are source examples for editing and study. They all use `core.p4` and `v1model.p4`, which the server also bundles in [p4include/](p4include/). Use the upstream tutorial's [exercise instructions and runtime setup](https://github.com/p4lang/tutorials/tree/b935e466363679495929e6827b12dd74de27e2dd/exercises) to run them.
+
+[examples/test.p4](examples/test.p4) and the architecture/header fixtures also provide parser regression coverage. The server's pinned fallback headers are maintained separately in [p4include/](p4include/).
 
 ## Development
 
