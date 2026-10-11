@@ -5,6 +5,12 @@ SPDX-License-Identifier: Apache-2.0
 
 # P4 language support for VS Code
 
+<p align="left">
+    <a href="LICENSE">
+        <img src="https://img.shields.io/badge/License-Apache--2.0-blue" alt="License: Apache-2.0">
+    </a>
+</p>
+
 P4_16 editing with a Tree-sitter language server. VS Code 1.96 or newer is required.
 
 **The latest version before the refactor is `0.0.14`.** The current code is version `0.1.0`, described below.
@@ -196,10 +202,4 @@ npm run build
 node dist/server.js --stdio
 ```
 
-The VSIX contains the bundled client/server, both WASM assets, standard headers, grammar source, and third-party licenses. No compiler installation, native Node addon, or runtime package download is required. Build scripts emit `dist/THIRD_PARTY_LICENSES.txt` from the actual bundled dependencies.
-
-## Licenses
-
-Project-owned source, tests, configuration, and documentation carry **Zhanghan Wang** copyright notices and are Apache-2.0; see [LICENSE](LICENSE) and [NOTICE](NOTICE). Comment-capable files start with SPDX declarations. Strict JSON and binary assets use adjacent `.license` files following the [REUSE file-notice convention](https://reuse.software/spec/).
-
-The modified Tree-sitter grammar derives from [oxidecomputer/tree-sitter-p4](https://github.com/oxidecomputer/tree-sitter-p4) and retains MPL-2.0 and upstream attribution; see [grammar/NOTICE](grammar/NOTICE) and [grammar/LICENSE](grammar/LICENSE). Grammar source is distributed with the extension. Standard headers and architecture fixtures retain their upstream copyright and license notices. The bundled standard headers' license is in [p4include/LICENSE](p4include/LICENSE). Bundled JavaScript and the Tree-sitter runtime have their respective licenses in `dist/THIRD_PARTY_LICENSES.txt`.
+The VSIX contains the bundled client/server, both WASM assets, standard headers, and grammar source. No compiler installation, native Node addon, or runtime package download is required.
