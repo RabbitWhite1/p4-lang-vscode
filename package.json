@@ -4,7 +4,7 @@
     "name": "p4-lang",
     "displayName": "p4-lang",
     "description": "P4_16 language support with a Tree-sitter language server",
-    "version": "0.1.0",
+    "version": "1.0.0",
     "repository": "https://github.com/RabbitWhite1/p4-lang-vscode",
     "publisher": "ZhanghanWang",
     "engines": {

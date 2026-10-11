@@ -27,7 +27,7 @@ connection.onInitialize(params => {
     workspace.roots = params.workspaceFolders?.map(folder => folder.uri) ?? (params.rootUri ? [params.rootUri] : []);
     if (params.initializationOptions?.p4) { workspace.configure(params.initializationOptions.p4); }
     const result: InitializeResult = {
-        serverInfo: { name: 'P4 Tree-sitter Language Server', version: '0.1.0' },
+        serverInfo: { name: 'P4 Tree-sitter Language Server', version: '1.0.0' },
         capabilities: {
             textDocumentSync: { openClose: true, change: TextDocumentSyncKind.Incremental, save: { includeText: false } },
             completionProvider: { triggerCharacters: ['.'] }, hoverProvider: true,

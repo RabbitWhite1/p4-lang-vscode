@@ -13,7 +13,9 @@ SPDX-License-Identifier: Apache-2.0
 
 P4_16 editing with a Tree-sitter language server. VS Code 1.96 or newer is required.
 
-**The latest version before the refactor is `0.0.14`.** The current code is version `0.1.0`, described below.
+> **Experimental, vibe-coded project:** The language server refactor was developed with substantial AI assistance. Bugs and incomplete language support are possible. Review rename edits and validate your programs with `p4c`.
+
+**The latest version before the refactor is `0.0.14`.** The current code is version `1.0.0`, described below.
 
 ## Features
 
@@ -198,7 +200,7 @@ Use Node.js **22.17 or newer** and npm. The development tests use Node's `--test
 npm ci
 npm test
 npm run lint
-npm run package -- --out /tmp/p4-lang-0.1.0.vsix
+npm run package -- --out /tmp/p4-lang-1.0.0.vsix
 ```
 
 `npm test` builds the distributable bundles, compiles test imports, and runs parser, preprocessing, semantic, workspace, feature, and real LSP protocol tests. Protocol tests launch child servers and require working child-process stdin/stdout pipes.
