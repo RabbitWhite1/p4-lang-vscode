@@ -1,5 +1,6 @@
 # Change Log
 
+- 0.1.0: replace ANTLR visitors with a Tree-sitter WASM language server; add completion, definitions, hover, signatures, references, rename, symbols, folding, semantic tokens, and syntax/include diagnostics. Support incremental edits, unsaved includes, conditional branches, resource settings, and bundled standard P4 headers. Add parser, semantic, workspace, and LSP integration tests.
 - 0.0.14: better `typeRef` support
 - 0.0.13: fix auto closing
 - 0.0.12: support `annotation`, `type`
