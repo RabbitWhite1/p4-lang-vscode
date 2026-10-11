@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2026 Zhanghan Wang
+// SPDX-License-Identifier: Apache-2.0
+
 import { CancellationToken, CompletionItem, CompletionItemKind, DocumentSymbol, FoldingRange, FoldingRangeKind,
     Hover, Location, LSPErrorCodes, MarkupKind, Position, PrepareRenameResult, Range, ResponseError,
     SemanticTokens, SemanticTokensBuilder, SignatureHelp, SymbolInformation, SymbolKind, TextEdit, WorkspaceEdit } from 'vscode-languageserver/node';

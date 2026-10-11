@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: Ryan Goodfellow
+// SPDX-FileCopyrightText: 2026 Zhanghan Wang (modifications)
 // SPDX-License-Identifier: MPL-2.0
 // Adapted from oxidecomputer/tree-sitter-p4 (Ryan Goodfellow).
 // Modified for P4_16 declarations, editor recovery, and named semantic fields.

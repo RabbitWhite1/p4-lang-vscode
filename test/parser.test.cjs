@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2026 Zhanghan Wang
+// SPDX-License-Identifier: Apache-2.0
+
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
@@ -5,10 +8,10 @@ const path = require('node:path');
 const { ParsedFile, walk } = require('../out/server/parser');
 const { preprocess } = require('../out/server/preprocessor');
 
-test('Tree-sitter parses the bundled P4 architectures and calculator program', async () => {
-    for (const name of fs.readdirSync('sample').filter(name => name.endsWith('.p4') && name !== 'testttt.p4')) {
-        const source = fs.readFileSync(path.join('sample', name), 'utf8');
-        const uri = `file:///sample/${name}`;
+test('Tree-sitter parses the example P4 architectures and calculator program', async () => {
+    for (const name of fs.readdirSync('examples').filter(name => name.endsWith('.p4'))) {
+        const source = fs.readFileSync(path.join('examples', name), 'utf8');
+        const uri = `file:///examples/${name}`;
         const masked = await preprocess(uri, source, new Map());
         const file = await ParsedFile.create(uri, source, masked.text);
         try {

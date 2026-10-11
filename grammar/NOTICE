@@ -1,3 +1,6 @@
+SPDX-FileCopyrightText: 2026 Zhanghan Wang (modifications)
+SPDX-License-Identifier: MPL-2.0
+
 The P4 Tree-sitter grammar was adapted from:
 https://github.com/oxidecomputer/tree-sitter-p4
 Author: Ryan Goodfellow

@@ -1,3 +1,8 @@
+<!--
+SPDX-FileCopyrightText: 2026 Zhanghan Wang
+SPDX-License-Identifier: Apache-2.0
+-->
+
 # Change Log
 
 - 0.1.0: replace ANTLR visitors with a Tree-sitter WASM language server; add completion, definitions, hover, signatures, references, rename, symbols, folding, semantic tokens, and syntax/include diagnostics. Support incremental edits, unsaved includes, conditional branches, resource settings, and bundled standard P4 headers. Add parser, semantic, workspace, and LSP integration tests.

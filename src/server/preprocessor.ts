@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2026 Zhanghan Wang
+// SPDX-License-Identifier: Apache-2.0
+
 export interface Macro {
     name: string;
     value: string;

@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2026 Zhanghan Wang
+# SPDX-License-Identifier: Apache-2.0
+
 .vscode/**
 .git/**
 .gitignore
@@ -7,10 +10,11 @@ out/**
 scripts/**
 test/**
 docs/**
-sample/**
+examples/**
 grammar/src/**
 grammar/.cache/**
 package-lock.json
+package-lock.json.license
 tsconfig.json
 eslint.config.mjs
 *.vsix

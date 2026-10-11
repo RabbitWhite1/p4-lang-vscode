@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2026 Zhanghan Wang
+// SPDX-License-Identifier: Apache-2.0
+
 import * as esbuild from 'esbuild';
 import { mkdir, copyFile, readFile, readdir, writeFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';

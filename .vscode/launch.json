@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2026 Zhanghan Wang
+// SPDX-License-Identifier: Apache-2.0
+
 // A launch configuration that launches the extension inside a new window
 // Use IntelliSense to learn about possible attributes.
 // Hover to view descriptions of existing attributes.
@@ -11,7 +14,7 @@
             "request": "launch",
             "args": [
                 "--extensionDevelopmentPath=${workspaceFolder}",
-				"${workspaceFolder}/sample",
+				"${workspaceFolder}/examples",
             ],
 			"outFiles": [
 				"${workspaceFolder}/dist/**/*.js"

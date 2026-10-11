@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2026 Zhanghan Wang
+# SPDX-License-Identifier: Apache-2.0
+
 node_modules
 *.vsix
 out

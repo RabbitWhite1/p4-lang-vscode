@@ -1,0 +1,17 @@
+SPDX-FileCopyrightText: 2026 Zhanghan Wang
+SPDX-License-Identifier: Apache-2.0
+
+P4 language support for VS Code
+Copyright 2026 Zhanghan Wang
+
+Project-owned source, configuration, tests, and documentation are licensed
+under Apache-2.0; see LICENSE. Files that cannot contain comment headers
+have adjacent .license files.
+
+The adapted Tree-sitter grammar and generated parser retain MPL-2.0,
+Ryan Goodfellow attribution, and Zhanghan Wang modification notices; see
+grammar/LICENSE and grammar/NOTICE.
+
+Vendored P4 headers, historical architecture fixtures, language specifications,
+and the TextMate JSON schema retain their upstream attribution and licensing.
+Bundled JavaScript and runtime licenses are in dist/THIRD_PARTY_LICENSES.txt.

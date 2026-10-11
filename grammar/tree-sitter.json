@@ -1,4 +1,28 @@
 {
-  "grammars": [{ "name": "p4", "scope": "source.p4", "path": ".", "file-types": ["p4"] }],
-  "metadata": { "version": "0.1.0", "license": "MPL-2.0", "description": "P4_16 grammar for editor analysis", "authors": [{ "name": "P4-lang contributors" }], "links": { "repository": "https://github.com/RabbitWhite1/p4-lang-vscode" } }
+  "grammars": [
+    {
+      "name": "p4",
+      "scope": "source.p4",
+      "path": ".",
+      "file-types": [
+        "p4"
+      ]
+    }
+  ],
+  "metadata": {
+    "version": "0.1.0",
+    "license": "MPL-2.0",
+    "description": "P4_16 grammar for editor analysis",
+    "authors": [
+      {
+        "name": "Ryan Goodfellow"
+      },
+      {
+        "name": "Zhanghan Wang"
+      }
+    ],
+    "links": {
+      "repository": "https://github.com/RabbitWhite1/p4-lang-vscode"
+    }
+  }
 }

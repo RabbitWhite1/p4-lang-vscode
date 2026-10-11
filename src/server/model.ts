@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2026 Zhanghan Wang
+// SPDX-License-Identifier: Apache-2.0
+
 import { Node } from 'web-tree-sitter';
 import { SymbolKind } from 'vscode-languageserver/node';
 import { ParsedFile, walk } from './parser';

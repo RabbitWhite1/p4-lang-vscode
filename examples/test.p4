@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2026 Zhanghan Wang
+// SPDX-License-Identifier: Apache-2.0
 
 /*
  * P4 Calculator

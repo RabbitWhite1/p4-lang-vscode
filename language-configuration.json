@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2026 Zhanghan Wang
+// SPDX-License-Identifier: Apache-2.0
+
 {
     "comments": {
         // symbol used for single line comment. Remove this entry if your language does not support line comments

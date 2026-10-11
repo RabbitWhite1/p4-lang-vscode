@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2026 Zhanghan Wang
+// SPDX-License-Identifier: Apache-2.0
+
 import * as fs from 'node:fs/promises';
 import * as path from 'node:path';
 import { URI } from 'vscode-uri';

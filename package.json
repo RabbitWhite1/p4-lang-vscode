@@ -1,4 +1,6 @@
 {
+    "license": "Apache-2.0",
+    "author": "Zhanghan Wang",
     "name": "p4-lang",
     "displayName": "p4-lang",
     "description": "P4_16 language support with a Tree-sitter language server",
@@ -109,6 +111,5 @@
         "vscode-languageserver-textdocument": "^1.0.12",
         "vscode-uri": "^3.1.0",
         "web-tree-sitter": "0.27.1"
-    },
-    "license": "Apache-2.0"
+    }
 }
